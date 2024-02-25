@@ -27,6 +27,7 @@ df_filtered = df_filtered.dropna(subset=['Score'])
 df_sorted = df_filtered.sort_values(by='Score', ascending=False)
 
 
+
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
@@ -47,12 +48,14 @@ dots = base.mark_circle(size=60).encode(
     order=alt.Order('Score:Q', sort='descending')
 )
 
-
-final_chart = (box_plot + dots).facet(
+final_chart = (base.mark_circle(size=60).encode(
+    color=alt.Color('Color:N', legend=None),
+    opacity=alt.value(1),
+    order=alt.Order('Score:Q', sort='descending')  # Sort the dots by 'Score' within each facet
+).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5  
-).configure_facet(
-    
+    spacing=5
+)).configure_facet(
     columns=2
 )
 
