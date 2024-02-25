@@ -23,7 +23,6 @@ df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 
 df_sorted = df_filtered.sort_values(by=['State', 'Score'], ascending=[False, False])
 
-
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False)),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),
@@ -39,15 +38,13 @@ dots = base.mark_circle(size=60).encode(
 )
 
 
-final_chart = (
-    dots.facet(
-        column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-        spacing=5,
-    )
-    .transform_window(
-        rank='rank(Score)',
-        sort=[alt.SortField('Score', order='descending')]
-    )
+final_chart = dots.facet(
+    column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
+    spacing=5,
+    resolve={'scale': {'y': 'independent'}}  
+).transform_window(
+    rank='rank(Score)',
+    sort=[alt.SortField('Score', order='descending')]
 )
 
 
