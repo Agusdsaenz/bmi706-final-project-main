@@ -103,21 +103,18 @@ filtered_df2 = merged_df_corrected[
     (merged_df_corrected['Facility Name'].isin(selected_hospitals))
 ]
 
-
-base_encoding = alt.Chart(filtered_df2).encode(
+base_encoding = alt.Chart().encode(
     x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
     y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-    tooltip=['Facility Name', 'Score', 'Payment']
 )
 
 
 color_condition = alt.condition(
     alt.FieldOneOfPredicate(field='Hospital Name', oneOf=selected_hospitals),
-    alt.Color('Hospital Name:N', legend=None),  
-    alt.value('lightgrey')
+    alt.Color('Hospital Name:N', legend=None), 
+    alt.value('lightgrey')  
 )
 
-# Then, when creating the chart, make sure to also specify the data types in the encoding
 charts = []
 for measure in filtered_measures:
     filtered_data = filtered_df2[
@@ -125,16 +122,21 @@ for measure in filtered_measures:
         (filtered_df2['State'].isin(selected_states))
     ]
     
-    chart = alt.Chart(filtered_data).encode(
+   
+    base_encoding = alt.Chart(filtered_data).encode(
         x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
         y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-        color=color_condition,
-        tooltip=['Hospital Name:N', 'Score:Q', 'Payment:Q']  # specifying data types
+        color=alt.condition(
+            alt.FieldOneOfPredicate(field='Facility Name', oneOf=selected_hospitals),
+            alt.Color('Facility Name:N', legend=None),
+            alt.value('lightgrey')
+        ),
+        tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
     ).properties(
         title=measure
     )
     
-    charts.append(chart)
+    charts.append(base_encoding)
 
 
 grid_chart = alt.vconcat(
