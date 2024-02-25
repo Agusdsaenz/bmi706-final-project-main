@@ -115,6 +115,7 @@ color_condition = alt.condition(
     alt.value('lightgrey')  
 )
 
+
 charts = []
 for measure in filtered_measures:
     filtered_data = filtered_df2[
@@ -123,7 +124,7 @@ for measure in filtered_measures:
     ]
     
    
-    base_encoding = alt.Chart(filtered_data).encode(
+    chart = alt.Chart(filtered_data).mark_point().encode(
         x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
         y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
         color=alt.condition(
@@ -136,7 +137,7 @@ for measure in filtered_measures:
         title=measure
     )
     
-    charts.append(base_encoding)
+    charts.append(chart)
 
 
 grid_chart = alt.vconcat(
