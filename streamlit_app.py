@@ -24,10 +24,10 @@ df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 
 df_filtered = df_filtered.dropna(subset=['Score'])
 
+df_sorted = df_filtered.sort_values(by='Score', ascending=False)
 
 
-
-base = alt.Chart(df_filtered).encode(
+base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
