@@ -23,24 +23,30 @@ df_filtered = df[df['State'].isin(selected_states)]
 
 base = alt.Chart(df_filtered).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
+).properties(
+    
+    width=200
 )
-
 
 box_plot = base.mark_boxplot().encode(
     color=alt.value('lightgray'),
     opacity=alt.value(0.5)
 )
 
-dots = base.mark_circle(size=5).encode(  
+dots = base.mark_circle(size=60).encode(  
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1)
 )
 
 
 final_chart = (box_plot + dots).facet(
-    column='State:N'
+    column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
+    spacing=5  
+).configure_facet(
+   
+    columns=2
 )
 
 final_chart
