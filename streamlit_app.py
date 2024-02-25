@@ -93,41 +93,43 @@ merged_df_corrected = complications_deaths_filtered_df.merge(
 
 merged_df_corrected = merged_df_corrected.drop('State_y', axis=1)
 merged_df_corrected = merged_df_corrected.rename(columns={'State_x': 'State'})
+merged_df_corrected = merged_df_corrected.drop('Facility Name_y', axis=1)
+merged_df_corrected = merged_df_corrected.rename(columns={'Facility Name_x': 'Facility Name'})
 
+print(merged_df_corrected.columns)
 
 filtered_df2 = merged_df_corrected[
     (merged_df_corrected['State'].isin(selected_states)) &
-    (merged_df_corrected['Facility ID'].isin(selected_hospitals))
+    (merged_df_corrected['Facility Name'].isin(selected_hospitals))
 ]
 
 
 base_encoding = alt.Chart(filtered_df2).encode(
     x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
     y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-    tooltip=['Hospital Name', 'Score', 'Payment']
+    tooltip=['Facility Name', 'Score', 'Payment']
 )
 
 
 color_condition = alt.condition(
     alt.FieldOneOfPredicate(field='Hospital Name', oneOf=selected_hospitals),
-    alt.Color('Hospital Name:N', legend=None),
+    alt.Color('Hospital Name:N', legend=None),  
     alt.value('lightgrey')
 )
 
+# Then, when creating the chart, make sure to also specify the data types in the encoding
 charts = []
 for measure in filtered_measures:
-    
     filtered_data = filtered_df2[
         (filtered_df2['Measure Name'] == measure) &
         (filtered_df2['State'].isin(selected_states))
     ]
     
-    
     chart = alt.Chart(filtered_data).encode(
         x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
         y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
         color=color_condition,
-        tooltip=['Hospital Name', 'Score', 'Payment']
+        tooltip=['Hospital Name:N', 'Score:Q', 'Payment:Q']  # specifying data types
     ).properties(
         title=measure
     )
@@ -138,6 +140,5 @@ for measure in filtered_measures:
 grid_chart = alt.vconcat(
     *[alt.hconcat(*charts[i:i+4]) for i in range(0, len(charts), 4)]
 )
-
 
 grid_chart
