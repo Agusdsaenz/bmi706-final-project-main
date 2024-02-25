@@ -24,10 +24,9 @@ df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
-median_df = df_sorted.groupby(['State', 'Facility Name'])['Score'].median().reset_index()
+median_per_state = df_filtered.groupby('State')['Score'].median().reset_index()
 
-# Chart for dots
-base_dots = alt.Chart(df_filtered).encode(
+base = alt.Chart(df_filtered).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False), scale=alt.Scale(domain=[0.5, 1.8])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
@@ -35,27 +34,19 @@ base_dots = alt.Chart(df_filtered).encode(
     width=450
 )
 
-dots = base_dots.mark_circle(size=60).encode(  
+dots = base.mark_circle(size=60).encode(  
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
-).facet(
-    column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5,
 )
 
 
-base_median_lines = alt.Chart(median_df).encode(
-    y=alt.Y('median(Score):Q', axis=alt.Axis(title='Median Score', labels=False)),
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
-    color=alt.Color('Color:N', legend=None),
+median_lines = alt.Chart(median_per_state).mark_rule().encode(
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Median Score', labels=False)),
+    color=alt.value('black'),
     size=alt.value(2)
+).properties(
+    width=450
 )
-
-median_lines = base_median_lines.mark_rule().facet(
-    column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5,
-)
-
 
 final_chart = alt.hconcat(dots, median_lines, spacing=10)
 
