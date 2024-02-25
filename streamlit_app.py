@@ -27,13 +27,11 @@ df_filtered = df_filtered.dropna(subset=['Score'])
 df_sorted = df_filtered.sort_values(by='Score', ascending=False)
 
 
-
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
 ).properties(
-    
     width=450
 )
 
@@ -42,20 +40,18 @@ box_plot = base.mark_boxplot().encode(
     opacity=alt.value(0.5)
 )
 
+# Add dots
 dots = base.mark_circle(size=60).encode(  
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
-    order=alt.Order('Score:Q', sort='descending')
+    order=alt.Order('Score:Q', sort='descending')  
 )
 
-final_chart = (base.mark_circle(size=60).encode(
-    color=alt.Color('Color:N', legend=None),
-    opacity=alt.value(1),
-    order=alt.Order('Score:Q', sort='descending')  # Sort the dots by 'Score' within each facet
-).facet(
+# Facet the chart
+final_chart = (box_plot + dots).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=5
-)).configure_facet(
+).configure_facet(
     columns=2
 )
 
