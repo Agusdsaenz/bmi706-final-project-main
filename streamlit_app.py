@@ -17,12 +17,12 @@ def apply_color(row):
 
 df['Color'] = df.apply(apply_color, axis=1)
 
-df_filtered = df[df['State'].isin(selected_states)]
+
+df_filtered = df[df['State'].isin(selected_states)].copy() 
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
-df_filtered = df_filtered.dropna(subset=['Score'])
 
 
-df_sorted = df_filtered.sort_values(by='Score', ascending=False)
+df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
 
 base = alt.Chart(df_sorted).encode(
@@ -39,14 +39,9 @@ dots = base.mark_circle(size=60).encode(
     opacity=alt.value(1),
 )
 
-
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=5,
-    sort=[alt.EncodingSortField('Score', order='descending')]  
-).configure_facet(
-    columns=2
 )
-
 
 final_chart
