@@ -26,52 +26,45 @@ df_filtered = df_filtered.dropna(subset=['Score'])
 
 
 
-medians = df_filtered.groupby(['State', 'Facility Name'])['Score'].median().reset_index()
-q1 = df_filtered.groupby(['State', 'Facility Name'])['Score'].quantile(0.25).reset_index()
-q3 = df_filtered.groupby(['State', 'Facility Name'])['Score'].quantile(0.75).reset_index()
+medians = df_filtered.groupby(['State', 'Facility Name'])['Score'].median().reset_index(name='Median_Score')
+q1 = df_filtered.groupby(['State', 'Facility Name'])['Score'].quantile(0.25).reset_index(name='Q1_Score')
+q3 = df_filtered.groupby(['State', 'Facility Name'])['Score'].quantile(0.75).reset_index(name='Q3_Score')
+
+
+df_filtered = df_filtered.merge(medians, on=['State', 'Facility Name'], how='left')
+df_filtered = df_filtered.merge(q1, on=['State', 'Facility Name'], how='left')
+df_filtered = df_filtered.merge(q3, on=['State', 'Facility Name'], how='left')
 
 
 base = alt.Chart(df_filtered).encode(
-    y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals')),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Score')),
+    color='Color:N',
     tooltip=['Facility Name', 'Score']
 ).properties(width=400)
 
-
-box_plot = base.mark_boxplot().encode(
-    color=alt.value('lightgray'),
-    opacity=alt.value(0.5)
-)
-
 points = base.mark_circle(size=50).encode(
-    color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1)
 )
 
-
-combined_chart = box_plot + points
-
-
 median_line = base.mark_rule(color='gold', size=2).encode(
-    y='median(Score):Q'
+    y='Median_Score:Q'
 )
 
 q1_line = base.mark_rule(color='purple', size=2).encode(
-    y='q1(Score):Q'
+    y='Q1_Score:Q'
 )
 
 q3_line = base.mark_rule(color='turquoise', size=2).encode(
-    y='q3(Score):Q'
+    y='Q3_Score:Q'
 )
 
 
-final_chart = combined_chart + median_line + q1_line + q3_line
+final_chart = points + median_line + q1_line + q3_line
 
 
 final_chart = final_chart.facet(
-    column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5
-).configure_facet(columns=2)
-
+    column='State:N'
+).configure_facet(spacing=10)
 
 final_chart
