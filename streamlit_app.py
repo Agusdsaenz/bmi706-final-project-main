@@ -53,6 +53,7 @@ final_chart
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 
+# Filter measures
 filtered_measures = [
     "Rate of complications for hip/knee replacement patients",
     "Death rate for heart attack patients",
@@ -64,6 +65,7 @@ complications_deaths_filtered_df = complications_deaths_df[
     complications_deaths_df['Measure Name'].isin(filtered_measures)
 ]
 
+# Mapping measure names
 measure_name_mapping = {
     "Rate of complications for hip/knee replacement patients": "Payment for hip/knee replacement patients",
     "Death rate for heart attack patients": "Payment for heart attack patients",
@@ -71,34 +73,31 @@ measure_name_mapping = {
     "Death rate for pneumonia patients": "Payment for pneumonia patients"
 }
 
-
 complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Measure Name'].map(measure_name_mapping)
 
 
 complications_deaths_filtered_df['Facility ID'] = complications_deaths_filtered_df['Facility ID'].astype(str)
-complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Payment Measure Name'].astype(str)
-
-
 payment_value_care_df['Facility ID'] = payment_value_care_df['Facility ID'].astype(str)
 
 
-payment_value_care_df['Payment Measure Name'] = payment_value_care_df['Payment Measure Name'].astype(str)
+complications_deaths_filtered_df.dropna(subset=['Facility Name'], inplace=True)
+payment_value_care_df.dropna(subset=['Facility Name'], inplace=True)
+
+complications_deaths_filtered_df['Facility Name'] = complications_deaths_filtered_df['Facility Name'].str.strip()
+payment_value_care_df['Facility Name'] = payment_value_care_df['Facility Name'].str.strip()
 
 
 merged_df_corrected = complications_deaths_filtered_df.merge(
     payment_value_care_df,
-    on=['Facility ID', 'Payment Measure Name'],
-    how='inner'
+     on=['Facility Name', 'Facility ID'],
+    how='outer'
 )
+
+print (merged_df_corrected.head())
 
 merged_df_corrected = merged_df_corrected.drop('State_y', axis=1)
 merged_df_corrected = merged_df_corrected.rename(columns={'State_x': 'State'})
-merged_df_corrected = merged_df_corrected.drop('Facility Name_y', axis=1)
-merged_df_corrected = merged_df_corrected.rename(columns={'Facility Name_x': 'Facility Name'})
 
-
-
-print(merged_df_corrected.columns)
 
 filtered_df2 = merged_df_corrected[
     (merged_df_corrected['State'].isin(selected_states)) &
@@ -117,17 +116,16 @@ hospital_to_color = {hospital: color for hospital, color in zip(selected_hospita
 
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
-
 scatter_plots = []
 for state in selected_states:
     for measure in filtered_measures:
-       
+        
         df_state_measure = filtered_df2[
             (filtered_df2['State'] == state) & 
             (filtered_df2['Measure Name'] == measure)
         ]
 
-       
+        
         scatter_plot = alt.Chart(df_state_measure).mark_point(filled=True, size=60).encode(
             x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
             y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
@@ -149,3 +147,4 @@ grid_chart = alt.vconcat(*[
 
 
 grid_chart
+
