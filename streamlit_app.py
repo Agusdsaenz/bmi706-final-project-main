@@ -28,7 +28,7 @@ df_sorted = df_filtered.sort_values(by='Score', ascending=False)
 
 
 base = alt.Chart(df_sorted).encode(
-    y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False)),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
 ).properties(
@@ -40,17 +40,15 @@ box_plot = base.mark_boxplot().encode(
     opacity=alt.value(0.5)
 )
 
-# Add dots
 dots = base.mark_circle(size=60).encode(  
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
-    order=alt.Order('Score:Q', sort='descending')  
 )
 
-# Facet the chart
 final_chart = (box_plot + dots).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5
+    spacing=5,
+    sort=[alt.EncodingSortField('Score', order='descending')]  
 ).configure_facet(
     columns=2
 )
