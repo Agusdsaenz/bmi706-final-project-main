@@ -103,45 +103,42 @@ filtered_df2 = merged_df_corrected[
     (merged_df_corrected['Facility Name'].isin(selected_hospitals))
 ]
 
-base_encoding = alt.Chart().encode(
-    x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
-    y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-)
+
+colors = ['red', 'green', 'blue']
+hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
 
-color_condition = alt.condition(
-    alt.FieldOneOfPredicate(field='Hospital Name', oneOf=selected_hospitals),
-    alt.Color('Hospital Name:N', legend=None), 
-    alt.value('lightgrey')  
-)
+filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
 
-charts = []
-for measure in filtered_measures:
-    filtered_data = filtered_df2[
-        (filtered_df2['Measure Name'] == measure) &
-        (filtered_df2['State'].isin(selected_states))
-    ]
-    
-   
-    chart = alt.Chart(filtered_data).mark_point().encode(
-        x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
-        y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-        color=alt.condition(
-            alt.FieldOneOfPredicate(field='Facility Name', oneOf=selected_hospitals),
-            alt.Color('Facility Name:N', legend=None),
-            alt.value('lightgrey')
-        ),
-        tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
-    ).properties(
-        title=measure
-    )
-    
-    charts.append(chart)
+scatter_plots = []
+for state in selected_states:
+    for measure in filtered_measures:
+       
+        df_state_measure = filtered_df2[
+            (filtered_df2['State'] == state) & 
+            (filtered_df2['Measure Name'] == measure)
+        ]
+
+       
+        scatter_plot = alt.Chart(df_state_measure).mark_point(filled=True, size=60).encode(
+            x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
+            y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
+            color=alt.Color('Color:N', legend=None),
+            tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
+        ).properties(
+            title=f'{state} - {measure}',
+            width=180,
+            height=180
+        )
+        
+        scatter_plots.append(scatter_plot)
 
 
-grid_chart = alt.vconcat(
-    *[alt.hconcat(*charts[i:i+4]) for i in range(0, len(charts), 4)]
-)
+grid_chart = alt.vconcat(*[
+    alt.hconcat(*scatter_plots[i:i + len(filtered_measures)]) 
+    for i in range(0, len(scatter_plots), len(filtered_measures))
+])
+
 
 grid_chart
