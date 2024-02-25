@@ -100,8 +100,6 @@ merged_df.to_csv('merged_df_corrected.csv', index=False)
 
 filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
 
-filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
-filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'], errors='coerce')
 
 
 filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
@@ -110,6 +108,7 @@ colors = ['red', 'green', 'blue']
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
+filtered_df2.to_csv('filtered.csv', index=False)
 
 scatter_plots = []
 for state in selected_states:
