@@ -49,3 +49,95 @@ final_chart = dots.facet(
 )
 
 final_chart
+
+complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
+payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
+
+filtered_measures = [
+    "Rate of complications for hip/knee replacement patients",
+    "Death rate for heart attack patients",
+    "Death rate for heart failure patients",
+    "Death rate for pneumonia patients"
+]
+
+complications_deaths_filtered_df = complications_deaths_df[
+    complications_deaths_df['Measure Name'].isin(filtered_measures)
+]
+
+measure_name_mapping = {
+    "Rate of complications for hip/knee replacement patients": "Payment for hip/knee replacement patients",
+    "Death rate for heart attack patients": "Payment for heart attack patients",
+    "Death rate for heart failure patients": "Payment for heart failure patients",
+    "Death rate for pneumonia patients": "Payment for pneumonia patients"
+}
+
+
+complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Measure Name'].map(measure_name_mapping)
+
+
+complications_deaths_filtered_df['Facility ID'] = complications_deaths_filtered_df['Facility ID'].astype(str)
+complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Payment Measure Name'].astype(str)
+
+
+payment_value_care_df['Facility ID'] = payment_value_care_df['Facility ID'].astype(str)
+
+
+payment_value_care_df['Payment Measure Name'] = payment_value_care_df['Payment Measure Name'].astype(str)
+
+
+merged_df_corrected = complications_deaths_filtered_df.merge(
+    payment_value_care_df,
+    on=['Facility ID', 'Payment Measure Name'],
+    how='inner'
+)
+
+merged_df_corrected = merged_df_corrected.drop('State_y', axis=1)
+merged_df_corrected = merged_df_corrected.rename(columns={'State_x': 'State'})
+
+
+filtered_df2 = merged_df_corrected[
+    (merged_df_corrected['State'].isin(selected_states)) &
+    (merged_df_corrected['Facility ID'].isin(selected_hospitals))
+]
+
+
+base_encoding = alt.Chart(filtered_df2).encode(
+    x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
+    y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
+    tooltip=['Hospital Name', 'Score', 'Payment']
+)
+
+
+color_condition = alt.condition(
+    alt.FieldOneOfPredicate(field='Hospital Name', oneOf=selected_hospitals),
+    alt.Color('Hospital Name:N', legend=None),
+    alt.value('lightgrey')
+)
+
+charts = []
+for measure in filtered_measures:
+    
+    filtered_data = filtered_df2[
+        (filtered_df2['Measure Name'] == measure) &
+        (filtered_df2['State'].isin(selected_states))
+    ]
+    
+    
+    chart = alt.Chart(filtered_data).encode(
+        x=alt.X('Score:Q', axis=alt.Axis(title='Death Rate')),
+        y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
+        color=color_condition,
+        tooltip=['Hospital Name', 'Score', 'Payment']
+    ).properties(
+        title=measure
+    )
+    
+    charts.append(chart)
+
+
+grid_chart = alt.vconcat(
+    *[alt.hconcat(*charts[i:i+4]) for i in range(0, len(charts), 4)]
+)
+
+
+grid_chart
