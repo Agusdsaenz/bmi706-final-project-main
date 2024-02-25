@@ -23,7 +23,8 @@ df_filtered = df[df['State'].isin(selected_states)]
 
 base = alt.Chart(df_filtered).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),  
-    x='Facility Name',
+    x=alt.X('Facility Name',axis=alt.Axis(labels=False)),
+
     tooltip=['Facility Name', 'Score']
 )
 
