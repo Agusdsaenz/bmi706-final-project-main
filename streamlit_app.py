@@ -38,16 +38,20 @@ dots = base.mark_circle(size=60).encode(
 )
 
 
-final_chart = dots.facet(
+median_line = base.mark_rule().encode(
+    y='median(Score):Q',
+    color=alt.value('black'),
+    size=alt.value(2)
+)
+
+final_chart = (dots + median_line).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=5,
 )
-
 
 final_chart = final_chart.transform_window(
     rank='rank(Score)',
     sort=[alt.SortField('Score', order='descending')]
 )
-
 
 final_chart
