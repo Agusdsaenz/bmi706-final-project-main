@@ -24,7 +24,7 @@ df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 
 df_filtered = df_filtered.dropna(subset=['Score'])
 
-df_filtered['sort_order'] = df_filtered['Score'].rank(method='first', ascending=False)
+
 
 
 base = alt.Chart(df_filtered).encode(
@@ -44,7 +44,7 @@ box_plot = base.mark_boxplot().encode(
 dots = base.mark_circle(size=60).encode(  
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
-    order='sort_order' 
+    order=alt.Order('Score:Q', sort='descending')
 )
 
 
