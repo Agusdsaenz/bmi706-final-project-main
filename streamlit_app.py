@@ -96,6 +96,8 @@ merged_df_corrected = merged_df_corrected.rename(columns={'State_x': 'State'})
 merged_df_corrected = merged_df_corrected.drop('Facility Name_y', axis=1)
 merged_df_corrected = merged_df_corrected.rename(columns={'Facility Name_x': 'Facility Name'})
 
+
+
 print(merged_df_corrected.columns)
 
 filtered_df2 = merged_df_corrected[
@@ -103,6 +105,11 @@ filtered_df2 = merged_df_corrected[
     (merged_df_corrected['Facility Name'].isin(selected_hospitals))
 ]
 
+filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
+filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'], errors='coerce')
+
+
+filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
 
 colors = ['red', 'green', 'blue']
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
