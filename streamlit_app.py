@@ -25,7 +25,7 @@ df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
 base = alt.Chart(df_filtered).encode(
-    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False)),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False), scale=alt.Scale(domain=[0, 3])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
 ).properties(
