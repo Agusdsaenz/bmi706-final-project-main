@@ -104,6 +104,18 @@ filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
 
 filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
 
+example_df = filtered_df2.head(10)  
+example_plot = alt.Chart(example_df).mark_point(filled=True, size=60).encode(
+    x='Score:Q',
+    y='Payment:Q',
+    color='Color:N'
+).properties(
+    title='Debug Plot',
+    width=180,
+    height=180
+)
+example_plot
+
 colors = ['red', 'green', 'blue'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
