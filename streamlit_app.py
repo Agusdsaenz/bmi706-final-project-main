@@ -27,7 +27,7 @@ base = alt.Chart(df_filtered).encode(
     tooltip=['Facility Name', 'Score']
 ).properties(
     
-    width=300
+    width=350
 )
 
 box_plot = base.mark_boxplot().encode(
