@@ -35,7 +35,7 @@ box_plot = base.mark_boxplot().encode(
 )
 
 
-dots = base.mark_circle(size=60).encode(
+dots = base.mark_circle(size=30).encode(
     color=alt.Color('Color:N', legend=None),  
     opacity=alt.value(1)  
 )
