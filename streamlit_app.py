@@ -11,33 +11,24 @@ selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL',
 colors = ['red', 'green', 'blue']  
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
-
-def apply_color(row):
-    return hospital_to_color.get(row['Facility Name'], 'black')
-
-
-df['Color'] = df.apply(apply_color, axis=1)
-
-
 df_filtered = df[df['State'].isin(selected_states)]
 
 base = alt.Chart(df_filtered).encode(
-    y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),  
-    x=alt.X('Facility Name:N', sort='-y', axis=alt.Axis(title='Hospitals', labels=False)),
-
+    y=alt.Y('Score:Q', axis=alt.Axis(labels=False)),
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort=None),  
     tooltip=['Facility Name', 'Score']
 )
 
 
 box_plot = base.mark_boxplot().encode(
-    color=alt.value('lightgray'),  
-    opacity=alt.value(0.5)  
+    color=alt.value('lightgray'),
+    opacity=alt.value(0.5)
 )
 
 
-dots = base.mark_circle(size=20).encode(
-    color=alt.Color('Color:N', legend=None),  
-    opacity=alt.value(1)  
+dots = base.mark_circle(size=10).encode(  
+    color=alt.Color('Color:N', legend=None),
+    opacity=alt.value(1)
 )
 
 
