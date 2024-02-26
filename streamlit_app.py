@@ -21,7 +21,6 @@ def apply_color(row):
 df['Color'] = df.apply(apply_color, axis=1)
 
 
-
 df_filtered = df[df['State'].isin(selected_states)].copy()
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
@@ -34,8 +33,10 @@ base = alt.Chart(df_sorted).encode(
     width=500
 )
 
-dots = base.mark_circle(size=50).encode(
-    color=alt.Color('Color:N', legend=None),
+dots = base.mark_circle().encode(
+    color=alt.Color('Color:N', 
+        scale=alt.Scale(scheme='lightgray'), 
+        legend=None),
     opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending')
 )
