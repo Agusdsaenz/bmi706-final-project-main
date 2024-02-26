@@ -10,6 +10,8 @@ selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL',
 
 
 colors = ['purple', 'green', 'blue']
+light_gray_scale = alt.Scale(domain=['purple', 'green', 'blue', '#D3D3D3'], range=['purple', 'green', 'blue', '#D3D3D3'])
+
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
 def apply_color(row):
@@ -34,8 +36,8 @@ base = alt.Chart(df_sorted).encode(
 )
 
 
-dots = base.mark_circle(size=50).encode(
-    color=alt.Color('Color:N', legend=None),
+dots = base.mark_circle().encode(
+    color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending')
 )
