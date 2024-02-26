@@ -25,7 +25,7 @@ df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score
 
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.5, 1.8])),
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
     width=450
@@ -34,6 +34,7 @@ base = alt.Chart(df_sorted).encode(
 dots = base.mark_circle(size=60).encode(
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
+    order=alt.Order('Score:Q', sort='descending')
 )
 
 final_chart = dots.facet(
@@ -45,6 +46,7 @@ final_chart = dots.facet(
 )
 
 final_chart
+
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 filtered_measures = [
