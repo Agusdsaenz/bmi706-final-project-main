@@ -43,9 +43,9 @@ dots = base.mark_circle(size=60).encode(
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=30  # Increase the spacing value to separate plots more clearly
+    spacing=45  
 ).configure_axis(
-    labelFontSize=12,  # Adjust font size for readability
+    labelFontSize=12,  
     titleFontSize=14
 )
 final_chart
