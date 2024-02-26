@@ -131,6 +131,7 @@ measure_titles = {
     "Death rate for pneumonia patients": "Pneumonia"
 }
 
+
 for state in selected_states:
     for measure in filtered_measures:
         df_state_measure = filtered_df2[
@@ -139,8 +140,8 @@ for state in selected_states:
         ]
         
         
-        min_payment = df_state_measure['Payment'].min()
-        y_scale = alt.Scale(domain=(0, min_payment * 1.2))  
+        max_payment = df_state_measure['Payment'].max()
+        y_scale = alt.Scale(domain=(0, max_payment * 1.2))  
         
         scatter_plot = alt.Chart(df_state_measure).mark_point(filled=True, size=60).encode(
             x=alt.X('Score:Q', axis=alt.Axis(title='Complications')),
@@ -150,7 +151,7 @@ for state in selected_states:
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
             width=200,
-            height=300  
+            height=200  
         )
         
         scatter_plots.append(scatter_plot)
