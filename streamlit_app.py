@@ -32,7 +32,7 @@ base = alt.Chart(df_sorted).encode(
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
-    width=500
+    width=550
 )
 
 
@@ -44,7 +44,7 @@ dots = base.mark_circle().encode(
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=55
+    spacing=40
 ).configure_axis(
     labelFontSize=12,  
     titleFontSize=14
