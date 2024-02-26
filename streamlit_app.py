@@ -143,9 +143,18 @@ for state in selected_states:
         scatter_plots.append(scatter_plot)
 
 
-grid_chart = alt.vconcat(*[
-    alt.hconcat(*scatter_plots[i:i + len(filtered_measures)]) for i in range(0, len(scatter_plots), len(filtered_measures))
-])
+h_spacing = 50 
+v_spacing = 100 
 
+grid_chart = alt.vconcat(
+    *[
+        alt.hconcat(
+            *scatter_plots[i:i + len(filtered_measures)], 
+            spacing=h_spacing
+        ) 
+        for i in range(0, len(scatter_plots), len(filtered_measures))
+    ],
+    spacing=v_spacing
+)
 
 grid_chart
