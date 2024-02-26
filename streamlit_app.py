@@ -8,18 +8,20 @@ df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
 
-
+#hard coded color for selected hospitals
 colors = ['purple', 'green', 'blue']
 light_gray_scale = alt.Scale(domain=['purple', 'green', 'blue', '#D3D3D3'], range=['purple', 'green', 'blue', '#D3D3D3'])
 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
+#helper function to map hospital to either the special 3 colors or default (grey)
 def apply_color(row):
     if row['Facility Name'] in hospital_to_color: 
         return hospital_to_color[row['Facility Name']]  
     else:
         return "#D3D3D3" 
 
+#set color property for each hospital
 df['Color'] = df.apply(apply_color, axis=1)
 
 
@@ -27,6 +29,7 @@ df_filtered = df[df['State'].isin(selected_states)].copy()
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
+#create facility name vs Medicare Spending per Beneficiary scatterplot
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.6, 1.4])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
@@ -34,7 +37,6 @@ base = alt.Chart(df_sorted).encode(
 ).properties(
     width=550
 )
-
 
 dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
@@ -66,7 +68,7 @@ complications_deaths_filtered_df = complications_deaths_df[
     complications_deaths_df['Measure Name'].isin(filtered_measures)
 ]
 
-
+#for each health condition (e.g. pnuemonia), mapping complication/death rate to appropriate payment measure
 measure_name_mapping = {
     "Rate of complications for hip/knee replacement patients": "Payment for hip/knee replacement patients",
     "Death rate for heart attack patients": "Payment for heart attack patients",
@@ -75,17 +77,19 @@ measure_name_mapping = {
 }
 complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Measure Name'].map(measure_name_mapping)
 
-
+#stringify facility IDs
 complications_deaths_filtered_df['Facility ID'] = complications_deaths_filtered_df['Facility ID'].astype(str)
 payment_value_care_df['Facility ID'] = payment_value_care_df['Facility ID'].astype(str)
 
+# remove facilities that are listed as NA
 complications_deaths_filtered_df.dropna(subset=['Facility Name'], inplace=True)
 payment_value_care_df.dropna(subset=['Facility Name'], inplace=True)
 
+#remove whitespace for facility name strings
 complications_deaths_filtered_df['Facility Name'] = complications_deaths_filtered_df['Facility Name'].str.strip()
 payment_value_care_df['Facility Name'] = payment_value_care_df['Facility Name'].str.strip()
 
-
+#merge complications/death data frame with payment data frame
 merged_df = complications_deaths_filtered_df.merge(
     payment_value_care_df,
     how='inner',
@@ -94,6 +98,7 @@ merged_df = complications_deaths_filtered_df.merge(
 )
 print (complications_deaths_filtered_df.head())
 
+#clean up column names in merged data set
 merged_df.drop(['State_y'], axis=1, inplace=True)
 merged_df.rename(columns={'State_x': 'State'}, inplace=True)
 
@@ -101,19 +106,22 @@ merged_df.drop(['Facility Name_y'], axis=1, inplace=True)
 merged_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
 
 
-
+#export merged dataset
 merged_df.to_csv('merged_df_corrected.csv', index=False)
 
+#subset the merged dataset to only 3 states that have been selected by user
 filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
 
+#remove any facilities with payment or scores that are NA
 filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
 
+#convert payments and score to numeric type
 filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'].str.replace('[\$,]', '', regex=True), errors='coerce')
-
 
 filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
 
 
+#map hospitals to 3 colors
 colors = ['red', 'green', 'blue'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 hospital_colors = alt.Scale(domain=['red', 'green', 'blue', 'lightgrey'], range=['red', 'green', 'blue', 'lightgray'])
@@ -131,6 +139,7 @@ measure_titles = {
     "Death rate for pneumonia patients": "Pneumonia"
 }
 
+#create scatterplots for each state
 
 for state in selected_states:
     for measure in filtered_measures:
