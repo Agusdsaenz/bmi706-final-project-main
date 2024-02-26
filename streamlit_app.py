@@ -13,41 +13,34 @@ hospital_to_color = {hospital: color for hospital, color in zip(selected_hospita
 
 
 def apply_color(row):
-    return hospital_to_color.get(row['Facility Name'], 'black')
+    return hospital_to_color.get(row['Facility Name'], 'grey')
 
 df['Color'] = df.apply(apply_color, axis=1)
-
 df_filtered = df[df['State'].isin(selected_states)].copy()
-
-
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
-
-
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
-
 base = alt.Chart(df_sorted).encode(
-    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary', labels=False), scale=alt.Scale(domain=[0.5, 1.8])),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.5, 1.8])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False)),  
     tooltip=['Facility Name', 'Score']
 ).properties(
     width=450
 )
 
-
-dots = base.mark_circle(size=60).encode(  
+dots = base.mark_circle(size=60).encode(
     color=alt.Color('Color:N', legend=None),
     opacity=alt.value(1),
 )
 
-
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=45  
+    spacing=45
 ).configure_axis(
     labelFontSize=12,  
     titleFontSize=14
 )
+
 final_chart
 
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
