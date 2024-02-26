@@ -1,7 +1,7 @@
 import altair as alt
 import pandas as pd
 
-
+### Task 1 : Medicare beneficiary spending per state and hospital 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
 
@@ -52,6 +52,8 @@ final_chart = dots.facet(
 
 final_chart
 
+### Task 3 - Payment per disease associated with complication rate 
+
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 filtered_measures = [
@@ -99,7 +101,7 @@ merged_df.drop(['Facility Name_y'], axis=1, inplace=True)
 merged_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
 
 
-print(merged_df.head())
+
 merged_df.to_csv('merged_df_corrected.csv', index=False)
 
 filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
@@ -111,30 +113,10 @@ filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'].str.replace('[\$
 
 filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
 
-print (filtered_df2.head())
-
-simplified_plot = alt.Chart(filtered_df2).mark_point(filled=True, size=60).encode(
-    x=alt.X('Score:Q', axis=alt.Axis(title='Score')),
-    y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-    tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
-).properties(
-    title='Simplified Debug Plot',
-    width=600,
-    height=400
-)
-
-simplified_plot
-
-row_count = len(filtered_df2)
-
-score_range = (filtered_df2['Score'].min(), filtered_df2['Score'].max()) if row_count > 0 else "Dataframe is empty"
-payment_range = (filtered_df2['Payment'].min(), filtered_df2['Payment'].max()) if row_count > 0 else "Dataframe is empty"
-
-print (score_range)
-print (payment_range)
 
 colors = ['red', 'green', 'blue'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
+hospital_colors = alt.Scale(domain=['red', 'green', 'blue', 'lightgrey'], range=['red', 'green', 'blue', 'lightgray'])
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
 filtered_df2.to_csv('filtered.csv', index=False)
@@ -150,7 +132,7 @@ for state in selected_states:
         scatter_plot = alt.Chart(df_state_measure).mark_point(filled=True, size=60).encode(
             x=alt.X('Score:Q', axis=alt.Axis(title='Score')),
             y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
-            color=alt.Color('Color:N', legend=None),
+            color=alt.Color('Color:N', scale=hospital_colors, legend=None),
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f'{state} - {measure}',
