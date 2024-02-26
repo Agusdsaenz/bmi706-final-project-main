@@ -121,6 +121,8 @@ filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fil
 
 filtered_df2.to_csv('filtered.csv', index=False)
 
+
+
 scatter_plots = []
 measure_titles = {
     "Rate of complications for hip/knee replacement patients": "Hip/Knee Replacement",
@@ -128,6 +130,7 @@ measure_titles = {
     "Death rate for heart failure patients": "Heart Failure", 
     "Death rate for pneumonia patients": "Pneumonia"
 }
+
 for state in selected_states:
     for measure in filtered_measures:
         df_state_measure = filtered_df2[
@@ -135,15 +138,19 @@ for state in selected_states:
             (filtered_df2['Measure Name'] == measure)
         ]
         
+        
+        min_payment = df_state_measure['Payment'].min()
+        y_scale = alt.Scale(domain=(0, min_payment * 1.2))  
+        
         scatter_plot = alt.Chart(df_state_measure).mark_point(filled=True, size=60).encode(
             x=alt.X('Score:Q', axis=alt.Axis(title='Complications')),
-            y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)')),
+            y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)'), scale=y_scale),
             color=alt.Color('Color:N', scale=hospital_colors, legend=None),
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
-            title = f"{state} - {measure_titles[measure]}",
+            title=f"{state} - {measure_titles[measure]}",
             width=200,
-            height=200
+            height=300  
         )
         
         scatter_plots.append(scatter_plot)
