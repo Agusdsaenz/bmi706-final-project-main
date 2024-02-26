@@ -4,7 +4,6 @@ import pandas as pd
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
-
 selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
 
@@ -180,4 +179,43 @@ grid_chart = alt.vconcat(
     spacing=v_spacing
 )
 
+
 grid_chart
+
+## Task 4 - plot hospital rating to Medicare spending 
+hospital_info_df = pd.read_csv('Hospital_General_Information.csv')
+medicare_spending_copy_df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
+
+#clean up hospital info and medicare spending tables before merging
+hospital_info_df['Facility ID'] = hospital_info_df['Facility ID'].astype(str)
+medicare_spending_copy_df['Facility ID'] = medicare_spending_copy_df['Facility ID'].astype(str)
+medicare_spending_copy_df.dropna(subset=['Facility Name'], inplace=True)
+hospital_info_df.dropna(subset=['Facility Name'], inplace=True)
+merged_hospital_info_spending_df = medicare_spending_copy_df.merge(
+    hospital_info_df,
+    how='inner',
+    left_on=['Facility ID'],
+    right_on=['Facility ID']
+)
+
+#After merging, ensure that any hospitals with spending or ratings that are NA are rmeoved, and relabel facility name column
+merged_hospital_info_spending_df.dropna(subset=['Hospital overall rating', 'Score'])
+merged_hospital_info_spending_df['Score'] = pd.to_numeric(merged_hospital_info_spending_df['Score'].str.replace('[\$,]', '', regex=True), errors='coerce')
+merged_hospital_info_spending_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
+
+#create boxplot only
+rating_base = alt.Chart(merged_hospital_info_spending_df).mark_boxplot(extent='min-max').encode(
+    x=alt.X('Hospital overall rating:N'),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'))
+).properties(
+    width=550,
+    title="Hospital Rating versus Medicare Spending"
+)
+
+
+print('Hospital Rating')
+print(merged_hospital_info_spending_df.head())
+
+
+rating_base
+
