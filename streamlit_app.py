@@ -28,7 +28,7 @@ base = alt.Chart(df_sorted).encode(
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
-    width=450
+    width=500
 )
 
 dots = base.mark_circle(size=50).encode(
