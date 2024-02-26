@@ -100,9 +100,14 @@ merged_df.to_csv('merged_df_corrected.csv', index=False)
 
 filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
 
-
-
 filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
+
+filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'].str.replace('[\$,]', '', regex=True), errors='coerce')
+
+
+filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
+
+print (filtered_df2.head())
 
 simplified_plot = alt.Chart(filtered_df2).mark_point(filled=True, size=60).encode(
     x=alt.X('Score:Q', axis=alt.Axis(title='Score')),
@@ -116,9 +121,13 @@ simplified_plot = alt.Chart(filtered_df2).mark_point(filled=True, size=60).encod
 
 simplified_plot
 
-print(complications_deaths_filtered_df['State'].unique())
-print(complications_deaths_filtered_df['Measure Name'].unique())
+row_count = len(filtered_df2)
 
+score_range = (filtered_df2['Score'].min(), filtered_df2['Score'].max()) if row_count > 0 else "Dataframe is empty"
+payment_range = (filtered_df2['Payment'].min(), filtered_df2['Payment'].max()) if row_count > 0 else "Dataframe is empty"
+
+print (score_range)
+print (payment_range)
 
 colors = ['red', 'green', 'blue'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
