@@ -13,7 +13,10 @@ colors = ['purple', 'green', 'blue']
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
 def apply_color(row):
-    return hospital_to_color.get(row['Facility Name'], 'grey')
+    if row['Facility Name'] in hospital_to_color:
+        return hospital_to_color[row['Facility Name']]
+    else:
+        return 'gray'
 
 df['Color'] = df.apply(apply_color, axis=1)
 
