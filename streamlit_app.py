@@ -8,14 +8,17 @@ df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
 
-colors = ['red', 'green', 'blue']
-hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
+colors = ['purple', 'green', 'blue']
+hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
 def apply_color(row):
     return hospital_to_color.get(row['Facility Name'], 'grey')
 
 df['Color'] = df.apply(apply_color, axis=1)
+
+
+
 df_filtered = df[df['State'].isin(selected_states)].copy()
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
@@ -35,14 +38,13 @@ dots = base.mark_circle(size=60).encode(
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=45
+    spacing=55
 ).configure_axis(
     labelFontSize=12,  
     titleFontSize=14
 )
 
 final_chart
-
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 filtered_measures = [
