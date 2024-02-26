@@ -43,9 +43,11 @@ dots = base.mark_circle(size=60).encode(
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
-    spacing=5,
+    spacing=30  # Increase the spacing value to separate plots more clearly
+).configure_axis(
+    labelFontSize=12,  # Adjust font size for readability
+    titleFontSize=14
 )
-
 final_chart
 
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
