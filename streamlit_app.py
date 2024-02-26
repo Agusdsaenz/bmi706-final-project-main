@@ -202,20 +202,40 @@ merged_hospital_info_spending_df = medicare_spending_copy_df.merge(
 merged_hospital_info_spending_df.dropna(subset=['Hospital overall rating', 'Score'])
 merged_hospital_info_spending_df['Score'] = pd.to_numeric(merged_hospital_info_spending_df['Score'].str.replace('[\$,]', '', regex=True), errors='coerce')
 merged_hospital_info_spending_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
+merged_hospital_info_spending_df.rename(columns={'State_x': 'State'}, inplace=True)
+
+filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[merged_hospital_info_spending_df['State'].isin(selected_states)]
 
 #create boxplot only
-rating_base = alt.Chart(merged_hospital_info_spending_df).mark_boxplot(extent='min-max').encode(
+rating_base = alt.Chart(filtered_merged_hospital_info_spending_df)
+
+rating_boxplot = rating_base.mark_boxplot(extent='min-max').encode(
     x=alt.X('Hospital overall rating:N'),
-    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'))
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.4,1.4]))
 ).properties(
     width=550,
     title="Hospital Rating versus Medicare Spending"
 )
 
+rating_jitter = rating_base.mark_circle(size=8).encode(
+    x=alt.X('Hospital overall rating:N'),
+    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.4,1.4])),
+    yOffset="jitter:Q",
+    color=alt.Color('Hospital overall rating:N').legend(None)
+).transform_calculate(
+    jitter='random()'
+)
+
+### To do - add state by state display and superimpose 3 hospitals
+
+
+
+rating_boxplot + rating_jitter
 
 print('Hospital Rating')
-print(merged_hospital_info_spending_df.head())
+print(filtered_merged_hospital_info_spending_df.head())
 
 
-rating_base
 
+## source: https://altair-viz.github.io/gallery/strip_plot_jitter.html
+# https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
