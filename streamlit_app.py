@@ -2,8 +2,35 @@ import altair as alt
 import pandas as pd
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
-df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
+# Heatmap of US with states colored by Medicare spending score
+
+state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
+
+us_states = alt.topo_feature(data.us_10m.url, 'states')
+
+# US states background
+base = alt.Chart(us_states).mark_geoshape(
+    fill='lightgray',
+    stroke='white'
+).properties(
+    width=500,
+    height=300
+).project('albersUsa')
+
+# Overlay with Medicare Spending score
+spending_map = alt.Chart(us_states).mark_geoshape().encode(
+    color='Score:Q'  
+).transform_lookup(
+    lookup='State',
+    from_=alt.LookupData(state_spending, 'State', ['Score']) 
+).project(
+    'albersUsa'
+).properties(
+    width=500,
+    height=300
+)
+df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
 selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
