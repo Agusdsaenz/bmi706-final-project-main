@@ -258,14 +258,14 @@ desired_height = 500
 fig.update_layout(height=desired_height)
 fig_bar.update_layout(height=desired_height)
 
+st.header("Medicare Spending Score per State")
+
 col1, col2 = st.columns(2) 
 
 with col1:
-    st.header("Medicare Spending Score per Beneficiary (USA)")
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    st.header("Medicare Spending Score per State")
     st.plotly_chart(fig_bar, use_container_width=True)
 
 st.header("Medicare Spending per Beneficiary by Hospital and State")
