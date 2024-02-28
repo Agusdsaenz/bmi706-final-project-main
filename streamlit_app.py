@@ -1,6 +1,7 @@
 import altair as alt
 import pandas as pd
 import plotly.graph_objects as go
+import streamlit as st
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
@@ -37,8 +38,6 @@ fig.update_layout(
     height=800
 )
 
-fig.show()
-
 # Bar chart
 
 fig_bar = go.Figure(go.Bar(
@@ -56,8 +55,6 @@ fig_bar.update_layout(
     height=600,  
     margin=dict(l=50, r=50, t=50, b=50), 
 )
-
-fig_bar.show()
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
@@ -227,4 +224,16 @@ grid_chart = alt.vconcat(
     spacing=v_spacing
 )
 
-grid_chart
+# Combine all the charts into one Streamlit app
+
+st.title("Medicare Beneficiary Spending Analysis")
+
+st.header("Medicare Spending Score per Beneficiary (USA)")
+st.plotly_chart(fig)
+
+st.header("Medicare Spending Score per State")
+st.plotly_chart(fig_bar)
+
+st.header("Medicare Spending per Beneficiary by Hospital and State")
+st.altair_chart(final_chart, use_container_width=True)
+
