@@ -54,7 +54,6 @@ fig_bar = go.Figure(go.Bar(
 ))
 
 fig_bar.update_layout(
-    title_text='Medicare Spending Score per State',
     xaxis_title='Spending Score',
     yaxis_title='State',
     width=1000,
@@ -76,7 +75,6 @@ fig = go.Figure(data=go.Choropleth(
 ))
 
 fig.update_layout(
-    title_text='Medicare Spending Score per Beneficiary',
     geo_scope='usa',  
     width=1200,
     height=800
