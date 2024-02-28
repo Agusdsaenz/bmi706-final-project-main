@@ -130,8 +130,6 @@ final_chart = dots.facet(
     titleFontSize=14
 )
 
-final_chart
-
 ### Task 3 - Payment per disease associated with complication rate 
 
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
