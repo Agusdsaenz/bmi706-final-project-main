@@ -262,4 +262,4 @@ st.plotly_chart(fig_bar)
 st.header("Medicare Spending per Beneficiary by Hospital and State")
 st.altair_chart(final_chart, use_container_width=True)
 
-st.altair_chart(scatter_plots)
+st.altair_chart(grid_chart)
