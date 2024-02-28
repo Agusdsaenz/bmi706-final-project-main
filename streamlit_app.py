@@ -3,8 +3,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-git config pull.ff only       # fast-forward only
-
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
 # Upload data
