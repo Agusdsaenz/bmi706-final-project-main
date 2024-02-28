@@ -57,7 +57,7 @@ fig_bar.update_layout(
     title_text='Medicare Spending Score per State',
     xaxis_title='Spending Score',
     yaxis_title='State',
-    width=400,
+    width=1000,
     height=600,  
     margin=dict(l=50, r=50, t=50, b=50),  
 )
