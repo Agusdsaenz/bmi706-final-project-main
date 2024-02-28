@@ -254,7 +254,7 @@ grid_chart = alt.vconcat(
 st.title("Medicare Beneficiary Spending Analysis")
 
 # Make the map and bar chart have the same height
-desired_height = 600
+desired_height = 1000
 fig.update_layout(height=desired_height)
 fig_bar.update_layout(height=desired_height)
 
