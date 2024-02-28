@@ -23,10 +23,10 @@ fig = go.Figure(data=go.Choropleth(
     locationmode='USA-states',
     colorscale='Blues',
     colorbar=dict(
-        title='Spending Score',  # Title for the colorbar
-        x=1,  # Position of the colorbar (1 is the default, which is the right side)
-        len=0.75,  # Length of the colorbar (as a fraction of the plot height)
-        thickness=20,  # Thickness of the colorbar
+        title='Spending Score',  
+        x=1,  
+        len=0.75,  
+        thickness=20,  
     )
 ))
 
@@ -42,9 +42,9 @@ fig.show()
 # Bar chart
 
 fig_bar = go.Figure(go.Bar(
-    x=state_spending_sorted['Score'],  # Data values
-    y=state_spending_sorted['State'],  # State abbreviations
-    orientation='h',  # Horizontal bar chart
+    x=state_spending_sorted['Score'],  
+    y=state_spending_sorted['State'],  
+    orientation='h',  
     marker=dict(color='rgba(58, 71, 80, 0.6)', line=dict(color='rgba(58, 71, 80, 1.0)', width=3))
 ))
 
@@ -53,8 +53,8 @@ fig_bar.update_layout(
     xaxis_title='Spending Score',
     yaxis_title='State',
     width=400,
-    height=600,  # Adjust the height based on the number of states to ensure readability
-    margin=dict(l=50, r=50, t=50, b=50),  # Adjust margins to fit state names if necessary
+    height=600,  
+    margin=dict(l=50, r=50, t=50, b=50), 
 )
 
 fig_bar.show()
