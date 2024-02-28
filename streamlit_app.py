@@ -7,7 +7,6 @@ import streamlit as st
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
 # Upload data
-# Upload data
 state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
 
 # Exclude rows where Score is 'Not Available'
@@ -24,7 +23,7 @@ state_spending['Score'] = pd.to_numeric(state_spending['Score'])
 # Sort by Score
 state_spending_sorted = state_spending.sort_values('Score', ascending=False)
 
-#print(state_spending)
+# Choropleth map
 fig = go.Figure(data=go.Choropleth(
     locations=state_spending['State'],  # State abbreviations
     z=state_spending['Score'],  # Data values
@@ -45,8 +44,6 @@ fig.update_layout(
     height=800
 )
 
-fig.show()
-
 # Bar chart
 
 fig_bar = go.Figure(go.Bar(
@@ -65,11 +62,6 @@ fig_bar.update_layout(
     margin=dict(l=50, r=50, t=50, b=50),  # Adjust margins to fit state names if necessary
 )
 
-fig_bar.show()
-# Sort by Score
-state_spending_sorted = state_spending.sort_values('Score', ascending=False)
-
-#print(state_spending)
 fig = go.Figure(data=go.Choropleth(
     locations=state_spending['State'],  # State abbreviations
     z=state_spending['Score'],  # Data values
@@ -85,28 +77,11 @@ fig = go.Figure(data=go.Choropleth(
 
 fig.update_layout(
     title_text='Medicare Spending Score per Beneficiary',
-    geo_scope='usa',  # limit map scope to USA
+    geo_scope='usa',  
     width=1200,
     height=800
 )
 
-# Bar chart
-
-fig_bar = go.Figure(go.Bar(
-    x=state_spending_sorted['Score'],  
-    y=state_spending_sorted['State'],  
-    orientation='h',  
-    marker=dict(color='rgba(58, 71, 80, 0.6)', line=dict(color='rgba(58, 71, 80, 1.0)', width=3))
-))
-
-fig_bar.update_layout(
-    title_text='Medicare Spending Score per State',
-    xaxis_title='Spending Score',
-    yaxis_title='State',
-    width=400,
-    height=600,  
-    margin=dict(l=50, r=50, t=50, b=50), 
-)
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
