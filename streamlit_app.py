@@ -253,7 +253,7 @@ grid_chart = alt.vconcat(
 
 st.title("Medicare Beneficiary Spending Analysis")
 
-col1, col2 = st.columns([3, 2])  # Adjust the ratio as needed for your charts
+col1, col2 = st.columns([3, 1]) 
 
 with col1:
     st.header("Medicare Spending Score per Beneficiary (USA)")
