@@ -258,7 +258,7 @@ desired_height = 500
 fig.update_layout(height=desired_height)
 fig_bar.update_layout(height=desired_height)
 
-col1, col2 = st.columns([5, 2]) 
+col1, col2 = st.columns(2) 
 
 with col1:
     st.header("Medicare Spending Score per Beneficiary (USA)")
