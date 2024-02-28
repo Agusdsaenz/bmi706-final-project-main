@@ -253,11 +253,15 @@ grid_chart = alt.vconcat(
 
 st.title("Medicare Beneficiary Spending Analysis")
 
-st.header("Medicare Spending Score per Beneficiary (USA)")
-st.plotly_chart(fig)
+col1, col2 = st.columns([3, 2])  # Adjust the ratio as needed for your charts
 
-st.header("Medicare Spending Score per State")
-st.plotly_chart(fig_bar)
+with col1:
+    st.header("Medicare Spending Score per Beneficiary (USA)")
+    st.plotly_chart(fig, use_container_width=True)
+
+with col2:
+    st.header("Medicare Spending Score per State")
+    st.plotly_chart(fig_bar, use_container_width=True)
 
 st.header("Medicare Spending per Beneficiary by Hospital and State")
 st.altair_chart(final_chart, use_container_width=True)
