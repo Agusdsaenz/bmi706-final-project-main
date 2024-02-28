@@ -47,10 +47,14 @@ fig.update_layout(
 # Bar chart
 
 fig_bar = go.Figure(go.Bar(
-    x=state_spending_sorted['Score'],  # Data values
+    x=state_spending_sorted['Spending score'],  # Data values
     y=state_spending_sorted['State'],  # State abbreviations
-    orientation='h',  
-    marker=dict(color='rgba(173, 216, 230, 0.6)', line=dict(color='rgba(173, 216, 230, 1.0)', width=3))
+    orientation='h',
+    marker=dict(
+        color=state_spending_sorted['Score'],  # Assign a color based on the 'Score' value
+        colorscale='Blues',
+        line=dict(color='rgba(173, 216, 230, 1.0)', width=3)
+    )
 ))
 
 fig_bar.update_layout(
