@@ -1,38 +1,63 @@
 import altair as alt
 import pandas as pd
-from vega_datasets import data
+import plotly.graph_objects as go
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
-# Heatmap of US with states colored by Medicare spending score
-
+# Upload data
 state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
 
-us_states = alt.topo_feature(data.us_10m.url, 'states')
+# Exclude rows where Score is 'Not Available'
+state_spending = state_spending[state_spending['Score'] != 'Not Available']
 
-# US states background
-base = alt.Chart(us_states).mark_geoshape(
-    fill='lightgray',
-    stroke='white'
-).properties(
-    width=500,
-    height=300
-).project('albersUsa')
+# Convert the Score column to numeric values
+state_spending['Score'] = pd.to_numeric(state_spending['Score'])
 
-# Overlay with Medicare Spending score
-spending_map = alt.Chart(us_states).mark_geoshape().encode(
-    color='Score:Q'  
-).transform_lookup(
-    lookup='State',
-    from_=alt.LookupData(state_spending, 'State', ['Score']) 
-).project(
-    'albersUsa'
-).properties(
-    width=500,
-    height=300
+# Sort by Score
+state_spending_sorted = state_spending.sort_values('Score', ascending=False)
+
+#print(state_spending)
+fig = go.Figure(data=go.Choropleth(
+    locations=state_spending['State'],  # State abbreviations
+    z=state_spending['Score'],  # Data values
+    locationmode='USA-states',
+    colorscale='Blues',
+    colorbar=dict(
+        title='Spending Score',  # Title for the colorbar
+        x=1,  # Position of the colorbar (1 is the default, which is the right side)
+        len=0.75,  # Length of the colorbar (as a fraction of the plot height)
+        thickness=20,  # Thickness of the colorbar
+    )
+))
+
+fig.update_layout(
+    title_text='Medicare Spending Score per Beneficiary',
+    geo_scope='usa',  # limit map scope to USA
+    width=1200,
+    height=800
 )
 
-base+spending_map
+fig.show()
+
+# Bar chart
+
+fig_bar = go.Figure(go.Bar(
+    x=state_spending_sorted['Score'],  # Data values
+    y=state_spending_sorted['State'],  # State abbreviations
+    orientation='h',  # Horizontal bar chart
+    marker=dict(color='rgba(58, 71, 80, 0.6)', line=dict(color='rgba(58, 71, 80, 1.0)', width=3))
+))
+
+fig_bar.update_layout(
+    title_text='Medicare Spending Score per State',
+    xaxis_title='Spending Score',
+    yaxis_title='State',
+    width=400,
+    height=600,  # Adjust the height based on the number of states to ensure readability
+    margin=dict(l=50, r=50, t=50, b=50),  # Adjust margins to fit state names if necessary
+)
+
+fig_bar.show()
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
