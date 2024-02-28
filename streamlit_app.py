@@ -47,7 +47,7 @@ fig.update_layout(
 # Bar chart
 
 fig_bar = go.Figure(go.Bar(
-    x=state_spending_sorted['Spending score'],  # Data values
+    x=state_spending_sorted['Score'],  # Data values
     y=state_spending_sorted['State'],  # State abbreviations
     orientation='h',
     marker=dict(
@@ -58,7 +58,7 @@ fig_bar = go.Figure(go.Bar(
 ))
 
 fig_bar.update_layout(
-    xaxis_title='Spending Score',
+    xaxis_title='Score',
     yaxis_title='State',
     width=1000,
     height=600,  
