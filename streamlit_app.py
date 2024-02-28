@@ -50,7 +50,7 @@ fig_bar = go.Figure(go.Bar(
     x=state_spending_sorted['Score'],  # Data values
     y=state_spending_sorted['State'],  # State abbreviations
     orientation='v',  
-    marker=marker=dict(color='rgba(173, 216, 230, 0.6)', line=dict(color='rgba(173, 216, 230, 1.0)', width=3))
+    marker=dict(color='rgba(173, 216, 230, 0.6)', line=dict(color='rgba(173, 216, 230, 1.0)', width=3))
 ))
 
 fig_bar.update_layout(
