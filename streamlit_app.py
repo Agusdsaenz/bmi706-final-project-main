@@ -30,6 +30,9 @@ spending_map = alt.Chart(us_states).mark_geoshape().encode(
     width=500,
     height=300
 )
+
+spending_map
+
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
 selected_states = ['MA', 'NY']
