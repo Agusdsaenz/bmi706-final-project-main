@@ -70,8 +70,8 @@ fig = go.Figure(data=go.Choropleth(
     colorbar=dict(
         title='Spending Score',  
         x=1,  
-        len=0.75,  
-        thickness=20,  
+        len=0.25,  
+        thickness=10,  
     )
 ))
 
