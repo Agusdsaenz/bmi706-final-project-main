@@ -3,20 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-unique_states = df['State'].unique().tolist()
-unique_hospitals = df['Facility Name'].unique().tolist()
 
-# Sidebar for state selection
-selected_state = st.sidebar.selectbox('Select a State', unique_states)
-
-# Sidebar for hospital selection
-# Use multiselect if you want users to be able to select multiple hospitals
-selected_hospitals = st.sidebar.multiselect('Select Hospitals', unique_hospitals)
-
-# Filter data based on selection
-filtered_data = df[df['State'] == selected_state]
-if selected_hospitals:
-    filtered_data = filtered_data[filtered_data['Facility Name'].isin(selected_hospitals)]
 
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
