@@ -142,7 +142,7 @@ base = alt.Chart(df_sorted).encode(
 
 dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
-    opacity=alt.value(1),
+    opacity=alt.value(0.5),
     order=alt.Order('Score:Q', sort='descending'),
     size=alt.condition(
         alt.datum.IsSelected,  
