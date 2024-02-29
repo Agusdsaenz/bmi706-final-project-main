@@ -274,23 +274,34 @@ st.altair_chart(final_chart, use_container_width=True)
 
 st.altair_chart(grid_chart)
 
-avg_df = filtered_df2.groupby('Facility Name').agg({'Payment': 'mean', 'Score': 'mean'}).reset_index()
+avg_payment_score = filtered_df2.groupby('Facility Name').agg({
+    'Payment': 'mean',
+    'Score': 'mean'
+}).reset_index()
 
 
-avg_df['Color'] = avg_df['Facility Name'].map(hospital_to_color)
+avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
 
 
-melted_df = avg_df.melt(id_vars=['Facility Name', 'Color'], value_vars=['Payment', 'Score'], var_name='Measure', value_name='Average')
-
-
-bar_chart = alt.Chart(melted_df).mark_bar().encode(
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospital')),
-    y=alt.Y('Average:Q', axis=alt.Axis(title='Average Value')),
-    color=alt.Color('Color:N', legend=None),
-    column=alt.Column('Measure:N', header=alt.Header(title='')),
-    tooltip=['Facility Name', 'Measure', 'Average']
+bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
+    x=alt.X('Facility Name:N', title='Hospital'),
+    y=alt.Y('Payment:Q', title='Average Payment ($)'),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=None),
+    tooltip=['Facility Name:N', 'Payment:Q']
 ).properties(
-    title='Average Payment and Risk Score per Hospital'
+    title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
 )
 
-bar_chart
+bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
+    x=alt.X('Facility Name:N', title='Hospital'),
+    y=alt.Y('Score:Q', title='Average Risk Score'),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=None),
+    tooltip=['Facility Name:N', 'Score:Q']
+).properties(
+    title='Average Risk Score'
+)
+
+
+bar_charts = alt.hconcat(bar_chart_payment, bar_chart_score, spacing=50).resolve_scale(color='independent')
+
+bar_charts
