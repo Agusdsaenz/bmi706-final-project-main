@@ -265,29 +265,6 @@ grid_chart = alt.vconcat(
     title= 'Payment versus complication for Pneumonia, Heart Attack, Heart Failure and Hip/Knee replacement'
 )
 
-# Combine all the charts into one Streamlit app
-
-st.title("Medicare Beneficiary Spending Analysis")
-
-# Make the map and bar chart have the same height
-desired_height = 500
-fig.update_layout(height=desired_height)
-fig_bar.update_layout(height=desired_height)
-
-st.header("Medicare Spending Score per State")
-
-col1, col2 = st.columns([2.5,1]) 
-
-with col1:
-    st.plotly_chart(fig, use_container_width=True)
-
-with col2:
-    st.plotly_chart(fig_bar, use_container_width=True)
-
-st.header("Medicare Spending per Beneficiary by Hospital and State")
-st.altair_chart(final_chart, use_container_width=True)
-
-st.altair_chart(grid_chart)
 
 avg_payment_score = filtered_df2.groupby('Facility Name').agg({
     'Payment': 'mean',
@@ -336,4 +313,78 @@ bar_charts = alt.hconcat(
     title='Complications vs Payments'
 )
 
-bar_charts
+# Combine all the charts into one Streamlit app
+
+st.title("Medicare Beneficiary Spending Analysis")
+
+# Make the map and bar chart have the same height
+desired_height = 500
+fig.update_layout(height=desired_height)
+fig_bar.update_layout(height=desired_height)
+
+st.header("Medicare Spending Score per State")
+
+col1, col2 = st.columns([2.5,1]) 
+
+with col1:
+    st.plotly_chart(fig, use_container_width=True)
+
+with col2:
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+st.header("Medicare Spending per Beneficiary by Hospital and State")
+st.altair_chart(final_chart, use_container_width=True)
+
+st.header ('Payment versus complication for Pneumonia, Heart Attack, Heart Failure and Hip/Knee replacement')
+st.altair_chart(grid_chart, use_container_width=True)
+
+st.header ('Complications vs Payments')
+st.altair_chart(bar_charts,use_container_width=True )
+
+avg_payment_score = filtered_df2.groupby('Facility Name').agg({
+    'Payment': 'mean',
+    'Score': 'mean'
+}).reset_index()
+
+
+avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
+
+
+avg_payment_score['Index'] = avg_payment_score['Facility Name'].apply(lambda x: selected_hospitals.index(x))
+
+
+hospital_colors = alt.Scale(domain=selected_hospitals, range=colors)
+
+
+bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
+    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals),  
+    y=alt.Y('Payment:Q', title='Average Payment ($)'),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")), 
+    tooltip=['Facility Name:N', 'Payment:Q']
+).properties(
+    title='Average Payments for MI+HF+Pneumonia+Hip/Knee',
+    width=250,
+    height=250
+)
+
+
+bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
+    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals), 
+    y=alt.Y('Score:Q', title='Average Risk Score'),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")),  
+    tooltip=['Facility Name:N', 'Score:Q']
+).properties(
+    title='Average Risk Score MI+HF+Pneumonia+Hip/Knee',
+    width=250,
+    height=250
+)
+
+
+bar_charts = alt.hconcat(
+    bar_chart_payment, bar_chart_score, spacing=50
+).resolve_scale(
+    color='independent'
+).properties(
+    title='Complications vs Payments'
+)
+
