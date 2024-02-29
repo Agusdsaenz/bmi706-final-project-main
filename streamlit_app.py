@@ -309,8 +309,6 @@ bar_charts = alt.hconcat(
     bar_chart_payment, bar_chart_score, spacing=50
 ).resolve_scale(
     color='independent'
-).properties(
-    title='Complications vs Payments'
 )
 
 # Combine all the charts into one Streamlit app
@@ -384,7 +382,4 @@ bar_charts = alt.hconcat(
     bar_chart_payment, bar_chart_score, spacing=50
 ).resolve_scale(
     color='independent'
-).properties(
-    title='Complications vs Payments'
 )
-
