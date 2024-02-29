@@ -314,8 +314,8 @@ bar_charts = alt.hconcat(
 st.title("Medicare Beneficiary Spending Analysis")
 
 # Make the map and bar chart have the same height
-desired_height = 600
-fig.update_layout(height=desired_height)
+desired_height = 500
+fig.update_layout(height=desired_height, width= 600)
 fig_bar.update_layout(height=desired_height)
 
 st.header("Medicare Spending Score per State")
