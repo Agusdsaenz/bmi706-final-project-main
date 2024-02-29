@@ -172,3 +172,24 @@ grid_chart = alt.vconcat(
 )
 
 grid_chart
+
+avg_df = filtered_df2.groupby('Facility Name').agg({'Payment': 'mean', 'Score': 'mean'}).reset_index()
+
+
+avg_df['Color'] = avg_df['Facility Name'].map(hospital_to_color)
+
+
+melted_df = avg_df.melt(id_vars=['Facility Name', 'Color'], value_vars=['Payment', 'Score'], var_name='Measure', value_name='Average')
+
+
+bar_chart = alt.Chart(melted_df).mark_bar().encode(
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospital')),
+    y=alt.Y('Average:Q', axis=alt.Axis(title='Average Value')),
+    color=alt.Color('Color:N', legend=None),
+    column=alt.Column('Measure:N', header=alt.Header(title='')),
+    tooltip=['Facility Name', 'Measure', 'Average']
+).properties(
+    title='Average Payment and Risk Score per Hospital'
+)
+
+bar_chart
