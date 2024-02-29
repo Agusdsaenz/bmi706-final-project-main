@@ -142,7 +142,7 @@ base = alt.Chart(df_sorted).encode(
 
 dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
-    opacity=alt.value(0.5),
+    opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending'),
     size=alt.condition(
         alt.datum.IsSelected,  
@@ -263,6 +263,7 @@ for state in selected_states:
             y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)'), scale=y_scale),
             color=alt.Color('Color:N', scale=hospital_colors, legend=None),
             size=alt.Size('DotSize:Q', legend=None),
+            opacity=alt.value(0.5),
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
