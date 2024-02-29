@@ -136,11 +136,11 @@ median_line = base.mark_rule(color='red').encode(
     size=alt.value(2)
 )
 
-final_chart = dots.facet(
+final_chart = (dots + median_line).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=40
 ).configure_axis(
-    labelFontSize=12,  
+    labelFontSize=12,
     titleFontSize=14
 )
 
