@@ -118,11 +118,17 @@ base = alt.Chart(df_sorted).encode(
 )
 
 
-dots = base.mark_circle(size=100).encode(
+dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     opacity=alt.value(1),
-    order=alt.Order('Score:Q', sort='descending')
+    order=alt.Order('Score:Q', sort='descending'),
+    size=alt.condition(
+        alt.datum.IsSelected,  
+        alt.value(100),        
+        alt.value(50)          
+    )
 )
+
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
