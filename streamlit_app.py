@@ -4,7 +4,24 @@ import plotly.graph_objects as go
 import streamlit as st
 
 
+state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
+hospital_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
+complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
+payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 
+# Clean your datasets (similar to the provided code)
+
+# Sidebar Selections
+# Aggregate unique states and hospitals for selection
+all_states = sorted(pd.concat([state_spending['State'], hospital_spending['State']]).unique())
+all_hospitals = sorted(pd.concat([hospital_spending['Facility Name'], complications_deaths_df['Facility Name'], payment_value_care_df['Facility Name']]).unique())
+
+selected_states = st.sidebar.multiselect('Select States', all_states, default=['MA', 'NY'])
+selected_hospitals = st.sidebar.multiselect('Select Hospitals', all_hospitals, default=['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL'])
+
+
+state_spending_filtered = state_spending[state_spending['State'].isin(selected_states)]
+hospital_spending_filtered = hospital_spending[hospital_spending['State'].isin(selected_states) & hospital_spending['Facility Name'].isin(selected_hospitals)]
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
