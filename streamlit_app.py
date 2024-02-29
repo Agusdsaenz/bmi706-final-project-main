@@ -109,43 +109,29 @@ df_filtered = df[df['State'].isin(selected_states)].copy()
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
-medians = df_filtered.groupby('State')['Score'].median().reset_index()
-
-
-df_sorted = pd.merge(df_sorted, medians, on='State', suffixes=('', '_median'))
-
-
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.6, 1.4])),
-    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),
+    x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
     width=550
 )
 
 
-dots = base.mark_circle(size=100).encode(
+dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending')
 )
 
-
-median_line = base.mark_rule(color='red', size=2).encode(
-    y='Score_median:Q',
-    color=alt.value('red')  # This sets the color of the median line
-)
-
-
-final_chart = (dots + median_line).facet(
+final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=40
 ).configure_axis(
-    labelFontSize=12,
+    labelFontSize=12,  
     titleFontSize=14
 )
 
-final_chart
 
 ### Task 3 - Payment per disease associated with complication rate 
 
