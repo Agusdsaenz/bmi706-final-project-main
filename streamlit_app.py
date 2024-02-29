@@ -135,7 +135,14 @@ median_line = alt.Chart(df_sorted).mark_rule(color='red', size=2).encode(
     y='median(Score):Q'
 )
 
-final_chart = alt.layer(dots, median_line).facet(
+median_label = base.mark_text(
+    align='left', dx=5, dy=-5, color='red', size=12
+).encode(
+    text=alt.Text('median(Score):Q', format='.2f'),  
+    y='median(Score):Q'
+)
+
+final_chart = alt.layer(dots, median_line, median_label ).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=40
 ).configure_axis(
