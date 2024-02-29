@@ -263,7 +263,7 @@ for state in selected_states:
             y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)'), scale=y_scale),
             color=alt.Color('Color:N', scale=hospital_colors, legend=None),
             size=alt.Size('DotSize:Q', legend=None),
-            opacity=alt.value(0.5),
+            opacity=alt.value(0.4),
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
