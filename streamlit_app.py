@@ -126,7 +126,7 @@ dots = base.mark_circle().encode(
     order=alt.Order('Score:Q', sort='descending'),
     size=alt.condition(
         alt.datum.IsSelected,  
-        alt.value(100),        
+        alt.value(150),        
         alt.value(50)          
     )
 )
