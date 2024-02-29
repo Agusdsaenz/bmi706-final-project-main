@@ -261,8 +261,6 @@ grid_chart = alt.vconcat(
         for i in range(0, len(scatter_plots), len(filtered_measures))
     ],
     spacing=v_spacing
-).properties(
-    title= 'Payment versus complication for Pneumonia, Heart Attack, Heart Failure and Hip/Knee replacement'
 )
 
 
@@ -339,47 +337,3 @@ st.altair_chart(grid_chart, use_container_width=True)
 st.header ('Complications vs Payments')
 st.altair_chart(bar_charts,use_container_width=True )
 
-avg_payment_score = filtered_df2.groupby('Facility Name').agg({
-    'Payment': 'mean',
-    'Score': 'mean'
-}).reset_index()
-
-
-avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
-
-
-avg_payment_score['Index'] = avg_payment_score['Facility Name'].apply(lambda x: selected_hospitals.index(x))
-
-
-hospital_colors = alt.Scale(domain=selected_hospitals, range=colors)
-
-
-bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
-    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals),  
-    y=alt.Y('Payment:Q', title='Average Payment ($)'),
-    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")), 
-    tooltip=['Facility Name:N', 'Payment:Q']
-).properties(
-    title='Average Payments for MI+HF+Pneumonia+Hip/Knee',
-    width=250,
-    height=250
-)
-
-
-bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
-    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals), 
-    y=alt.Y('Score:Q', title='Average Risk Score'),
-    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")),  
-    tooltip=['Facility Name:N', 'Score:Q']
-).properties(
-    title='Average Risk Score MI+HF+Pneumonia+Hip/Knee',
-    width=250,
-    height=250
-)
-
-
-bar_charts = alt.hconcat(
-    bar_chart_payment, bar_chart_score, spacing=50
-).resolve_scale(
-    color='independent'
-)
