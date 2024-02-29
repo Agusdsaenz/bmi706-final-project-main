@@ -9,7 +9,7 @@ hospital_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 
-# Clean your datasets (similar to the provided code)
+
 
 # Sidebar Selections
 # Aggregate unique states and hospitals for selection
@@ -136,7 +136,7 @@ base = alt.Chart(df_sorted).encode(
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
-    width=550
+    width=450
 )
 
 
