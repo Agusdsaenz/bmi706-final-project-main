@@ -289,7 +289,7 @@ avg_payment_score['Index'] = avg_payment_score['Facility Name'].apply(lambda x: 
 hospital_colors = alt.Scale(domain=selected_hospitals, range=colors)
 
 
-bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=20).encode(
+bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
     x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals),  
     y=alt.Y('Payment:Q', title='Average Payment ($)'),
     color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")), 
@@ -301,7 +301,7 @@ bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=20).encode(
 )
 
 
-bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=20).encode(
+bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
     x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals), 
     y=alt.Y('Score:Q', title='Average Risk Score'),
     color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")),  
