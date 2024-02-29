@@ -211,6 +211,8 @@ filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fil
 filtered_df2.to_csv('filtered.csv', index=False)
 
 
+selected_hospital_sizes = {hospital: 150 for hospital in selected_hospitals}  
+filtered_df2['DotSize'] = filtered_df2['Facility Name'].map(selected_hospital_sizes).fillna(50)  
 
 scatter_plots = []
 measure_titles = {
@@ -236,6 +238,7 @@ for state in selected_states:
             x=alt.X('Score:Q', axis=alt.Axis(title='Complications')),
             y=alt.Y('Payment:Q', axis=alt.Axis(title='Payment ($)'), scale=y_scale),
             color=alt.Color('Color:N', scale=hospital_colors, legend=None),
+            size=alt.Size('DotSize:Q', legend=None),
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
