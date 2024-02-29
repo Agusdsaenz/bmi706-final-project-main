@@ -250,6 +250,41 @@ grid_chart = alt.vconcat(
     spacing=v_spacing
 )
 
+
+avg_payment_score = filtered_df2.groupby('Facility Name').agg({
+    'Payment': 'mean',
+    'Score': 'mean'
+}).reset_index()
+
+
+avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
+
+print(avg_payment_score)
+
+
+bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
+    x=alt.X('Facility Name:N', title='Hospital'),
+    y=alt.Y('Payment:Q', title='Average Payment ($)'),
+    color=alt.Color('Facility Name:N', scale=alt.Scale(domain=selected_hospitals, range=colors), legend=None),
+    tooltip=['Facility Name:N', 'Payment:Q']
+).properties(
+    title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
+)
+
+bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
+    x=alt.X('Facility Name:N', title='Hospital'),
+    y=alt.Y('Score:Q', title='Average Risk Score'),
+    color=alt.Color('Facility Name:N', scale=alt.Scale(domain=selected_hospitals, range=colors), legend=None),
+    tooltip=['Facility Name:N', 'Score:Q']
+).properties(
+    title='Average Risk Score'
+)
+
+
+bar_charts = alt.hconcat(bar_chart_payment, bar_chart_score, spacing=50).resolve_scale(color='independent')
+
+bar_charts
+
 # Combine all the charts into one Streamlit app
 
 st.title("Medicare Beneficiary Spending Analysis")
@@ -273,35 +308,3 @@ st.header("Medicare Spending per Beneficiary by Hospital and State")
 st.altair_chart(final_chart, use_container_width=True)
 
 st.altair_chart(grid_chart)
-
-avg_payment_score = filtered_df2.groupby('Facility Name').agg({
-    'Payment': 'mean',
-    'Score': 'mean'
-}).reset_index()
-
-
-avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
-
-
-bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
-    x=alt.X('Facility Name:N', title='Hospital'),
-    y=alt.Y('Payment:Q', title='Average Payment ($)'),
-    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=None),
-    tooltip=['Facility Name:N', 'Payment:Q']
-).properties(
-    title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
-)
-
-bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
-    x=alt.X('Facility Name:N', title='Hospital'),
-    y=alt.Y('Score:Q', title='Average Risk Score'),
-    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=None),
-    tooltip=['Facility Name:N', 'Score:Q']
-).properties(
-    title='Average Risk Score'
-)
-
-
-bar_charts = alt.hconcat(bar_chart_payment, bar_chart_score, spacing=50).resolve_scale(color='independent')
-
-bar_charts
