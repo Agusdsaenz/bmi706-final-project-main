@@ -95,6 +95,8 @@ colors = ['blue', 'orange', 'yellow']
 light_gray_scale = alt.Scale(domain=['blue', 'orange', 'yellow', '#D3D3D3'], range=['blue', 'orange', 'yellow', '#D3D3D3'])
 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
+df['IsSelected'] = df['Facility Name'].apply(lambda x: x in selected_hospitals)
+
 
 def apply_color(row):
     if row['Facility Name'] in hospital_to_color: 
