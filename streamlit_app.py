@@ -1,7 +1,6 @@
 import altair as alt
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.graph_objects as go
 import streamlit as st
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
