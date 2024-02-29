@@ -131,6 +131,10 @@ dots = base.mark_circle().encode(
     )
 )
 
+median_line = base.mark_rule(color='red').encode(
+    y='median(Score):Q',
+    size=alt.value(2)
+)
 
 final_chart = dots.facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
