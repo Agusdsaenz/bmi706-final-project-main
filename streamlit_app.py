@@ -1,9 +1,91 @@
 import altair as alt
 import pandas as pd
+import plotly.graph_objects as go
+import plotly.graph_objects as go
+import streamlit as st
 
 ### Task 1 : Medicare beneficiary spending per state and hospital 
-df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
+# Upload data
+state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
+
+# Exclude rows where Score is 'Not Available'
+state_spending = state_spending[state_spending['Score'] != 'Not Available']
+
+# Convert the Score column to numeric values
+state_spending['Score'] = pd.to_numeric(state_spending['Score'])
+# Exclude rows where Score is 'Not Available'
+state_spending = state_spending[state_spending['Score'] != 'Not Available']
+
+# Convert the Score column to numeric values
+state_spending['Score'] = pd.to_numeric(state_spending['Score'])
+
+# Sort by Score
+state_spending_sorted = state_spending.sort_values('Score', ascending=False)
+
+# Choropleth map
+fig = go.Figure(data=go.Choropleth(
+    locations=state_spending['State'],  # State abbreviations
+    z=state_spending['Score'],  # Data values
+    locationmode='USA-states',
+    colorscale='Blues',
+    colorbar=dict(
+        title='Spending Score',  # Title for the colorbar
+        x=1,  # Position of the colorbar (1 is the default, which is the right side)
+        len=0.75,  # Length of the colorbar (as a fraction of the plot height)
+        thickness=20,  # Thickness of the colorbar
+    )
+))
+
+fig.update_layout(
+    title_text='Medicare Spending Score per Beneficiary',
+    geo_scope='usa',  # limit map scope to USA
+    width=1200,
+    height=800
+)
+
+# Bar chart
+
+fig_bar = go.Figure(go.Bar(
+    x=state_spending_sorted['Score'],  # Data values
+    y=state_spending_sorted['State'],  # State abbreviations
+    orientation='h',
+    marker=dict(
+        color=state_spending_sorted['Score'],  # Assign a color based on the 'Score' value
+        colorscale='Blues',
+        line=dict(color='rgba(173, 216, 230, 1.0)', width=3)
+    )
+))
+
+fig_bar.update_layout(
+    xaxis_title='Score',
+    yaxis_title='State',
+    width=1000,
+    height=600,  
+    margin=dict(l=50, r=50, t=50, b=50),  
+)
+
+fig = go.Figure(data=go.Choropleth(
+    locations=state_spending['State'],  # State abbreviations
+    z=state_spending['Score'],  # Data values
+    locationmode='USA-states',
+    colorscale='Blues',
+    colorbar=dict(
+        title='Spending Score',  
+        x=1,  
+        len=0.25,  
+        thickness=10,  
+    )
+))
+
+fig.update_layout(
+    geo_scope='usa',  
+    width=1200,
+    height=800
+)
+
+
+df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
 selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
@@ -49,8 +131,6 @@ final_chart = dots.facet(
     labelFontSize=12,  
     titleFontSize=14
 )
-
-final_chart
 
 ### Task 3 - Payment per disease associated with complication rate 
 
@@ -171,7 +251,29 @@ grid_chart = alt.vconcat(
     spacing=v_spacing
 )
 
-grid_chart
+# Combine all the charts into one Streamlit app
+
+st.title("Medicare Beneficiary Spending Analysis")
+
+# Make the map and bar chart have the same height
+desired_height = 500
+fig.update_layout(height=desired_height)
+fig_bar.update_layout(height=desired_height)
+
+st.header("Medicare Spending Score per State")
+
+col1, col2 = st.columns([2.5,1]) 
+
+with col1:
+    st.plotly_chart(fig, use_container_width=True)
+
+with col2:
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+st.header("Medicare Spending per Beneficiary by Hospital and State")
+st.altair_chart(final_chart, use_container_width=True)
+
+st.altair_chart(grid_chart)
 
 avg_df = filtered_df2.groupby('Facility Name').agg({'Payment': 'mean', 'Score': 'mean'}).reset_index()
 
