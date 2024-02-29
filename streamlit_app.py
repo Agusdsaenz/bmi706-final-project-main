@@ -90,7 +90,7 @@ selected_states = ['MA', 'NY']
 selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
 
 
-colors = ['purple', 'green', 'blue']
+colors = ['blue', 'orange', 'yellow']
 light_gray_scale = alt.Scale(domain=['blue', 'orange', 'yellow', '#D3D3D3'], range=['blue', 'orange', 'yellow', '#D3D3D3'])
 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
@@ -195,7 +195,7 @@ filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
 
 colors = ['red', 'green', 'blue'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
-hospital_colors = alt.Scale(domain=['red', 'green', 'blue', 'lightgrey'], range=['red', 'green', 'blue', 'lightgray'])
+hospital_colors = alt.Scale(domain=['blue', 'orange', 'yellow', 'lightgrey'], range=['blue', 'oange', 'yellow', 'lightgray'])
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
 filtered_df2.to_csv('filtered.csv', index=False)
