@@ -131,19 +131,17 @@ dots = base.mark_circle().encode(
     )
 )
 
-median_line = base.mark_rule(color='red').encode(
-    y='median(Score):Q',
-    size=alt.value(2)
+median_line = alt.Chart(df_sorted).mark_rule(color='red', size=2).encode(
+    y='median(Score):Q'
 )
 
-final_chart = (dots + median_line).facet(
+final_chart = alt.layer(dots, median_line).facet(
     column=alt.Column('State:N', header=alt.Header(labelOrient='bottom', titleOrient='bottom')),
     spacing=40
 ).configure_axis(
     labelFontSize=12,
     titleFontSize=14
 )
-
 
 ### Task 3 - Payment per disease associated with complication rate 
 
