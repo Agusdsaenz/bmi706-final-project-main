@@ -205,7 +205,7 @@ filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
 
 colors = ['blue', 'orange', 'yellow'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
-hospital_colors = alt.Scale(domain=['blue', 'orange', 'yellow', 'lightgrey'], range=['blue', 'oange', 'yellow', 'lightgray'])
+hospital_colors = alt.Scale(domain=['blue', 'orange', 'yellow', 'lightgrey'], range=['blue', 'orange', 'yellow', 'lightgray'])
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
 filtered_df2.to_csv('filtered.csv', index=False)
