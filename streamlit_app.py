@@ -283,29 +283,41 @@ avg_payment_score = filtered_df2.groupby('Facility Name').agg({
 avg_payment_score = avg_payment_score[avg_payment_score['Facility Name'].isin(selected_hospitals)]
 
 
-avg_payment_score['Hospital Index'] = pd.Categorical(avg_payment_score['Facility Name'], categories=selected_hospitals, ordered=True).codes
+avg_payment_score['Index'] = avg_payment_score['Facility Name'].apply(lambda x: selected_hospitals.index(x))
 
 
-bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
-    x=alt.X('Hospital Index:O', axis=alt.Axis(labels=False, title=None)),  # Disable x-axis labels
+hospital_colors = alt.Scale(domain=selected_hospitals, range=colors)
+
+
+bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=20).encode(
+    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals),  
     y=alt.Y('Payment:Q', title='Average Payment ($)'),
-    color=alt.Color('Facility Name:N', legend=alt.Legend(title="Hospital")),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")), 
     tooltip=['Facility Name:N', 'Payment:Q']
 ).properties(
-    title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
+    title='Average Payments for MI+HF+Pneumonia+Hip/Knee',
+    width=250,
+    height=250
 )
 
-bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
-    x=alt.X('Hospital Index:O', axis=alt.Axis(labels=False, title=None)),  
+
+bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=20).encode(
+    x=alt.X('Index:O', axis=alt.Axis(labels=False, title=None), sort=selected_hospitals), 
     y=alt.Y('Score:Q', title='Average Risk Score'),
-    color=alt.Color('Facility Name:N', legend=alt.Legend(title="Hospital")),
+    color=alt.Color('Facility Name:N', scale=hospital_colors, legend=alt.Legend(title="Hospital")),  
     tooltip=['Facility Name:N', 'Score:Q']
 ).properties(
-    title='Average Risk Score MI+HF+Pneumonia+Hip/Knee'
+    title='Average Risk Score MI+HF+Pneumonia+Hip/Knee',
+    width=250,
+    height=250
 )
 
 
-bar_charts = alt.hconcat(bar_chart_payment, bar_chart_score, spacing=50).resolve_scale(color='independent').properties(
+bar_charts = alt.hconcat(
+    bar_chart_payment, bar_chart_score, spacing=50
+).resolve_scale(
+    color='independent'
+).properties(
     title='Complications vs Payments'
 )
 
