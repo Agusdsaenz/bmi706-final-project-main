@@ -91,7 +91,7 @@ selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL',
 
 
 colors = ['purple', 'green', 'blue']
-light_gray_scale = alt.Scale(domain=['purple', 'green', 'blue', '#D3D3D3'], range=['purple', 'green', 'blue', '#D3D3D3'])
+light_gray_scale = alt.Scale(domain=['blue', 'orange', 'yellow', '#D3D3D3'], range=['blue', 'orange', 'yellow', '#D3D3D3'])
 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 
