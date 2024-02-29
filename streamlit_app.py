@@ -118,7 +118,7 @@ base = alt.Chart(df_sorted).encode(
 )
 
 
-dots = base.mark_circle().encode(
+dots = base.mark_circle(20).encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending')
