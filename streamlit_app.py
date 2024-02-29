@@ -269,6 +269,8 @@ bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
     tooltip=['Facility Name:N', 'Payment:Q']
 ).properties(
     title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
+    width= 250, 
+    height=250
 )
 
 bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
@@ -277,7 +279,9 @@ bar_chart_score = alt.Chart(avg_payment_score).mark_bar().encode(
     color=alt.Color('Facility Name:N', scale=alt.Scale(domain=selected_hospitals, range=colors), legend=None),
     tooltip=['Facility Name:N', 'Score:Q']
 ).properties(
-    title='Average Risk Score'
+    title='Average Risk Score MI+HF+Pneumonia+Hip/Knee',
+    width=250,
+    height=250
 )
 
 
