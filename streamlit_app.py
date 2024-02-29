@@ -118,7 +118,7 @@ base = alt.Chart(df_sorted).encode(
 )
 
 
-dots = base.mark_circle(20).encode(
+dots = base.mark_circle().encode(
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     opacity=alt.value(1),
     order=alt.Order('Score:Q', sort='descending')
@@ -250,6 +250,8 @@ grid_chart = alt.vconcat(
         for i in range(0, len(scatter_plots), len(filtered_measures))
     ],
     spacing=v_spacing
+).properties(
+    title= 'Payment versus complication for Pneumonia, Heart Attack, Heart Failure and Hip/Knee replacement'
 )
 
 # Combine all the charts into one Streamlit app
