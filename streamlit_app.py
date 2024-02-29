@@ -268,7 +268,7 @@ bar_chart_payment = alt.Chart(avg_payment_score).mark_bar().encode(
     color=alt.Color('Facility Name:N', scale=alt.Scale(domain=selected_hospitals, range=colors), legend=None),
     tooltip=['Facility Name:N', 'Payment:Q']
 ).properties(
-    title='Average Payments for MI+HF+Pneumonia+Hip/Knee'
+    title='Average Payments for MI+HF+Pneumonia+Hip/Knee',
     width= 250, 
     height=250
 )
