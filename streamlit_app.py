@@ -334,8 +334,8 @@ bar_chart_score = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
     tooltip=['Facility Name:N', 'Score:Q']
 ).properties(
     title='Average Risk Score MI+HF+Pneumonia+Hip/Knee',
-    width=250,
-    height=250
+    width=200,
+    height=200
 )
 
 
