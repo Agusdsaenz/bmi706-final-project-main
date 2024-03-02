@@ -14,22 +14,25 @@ payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 # Sidebar Selections
 # Aggregate unique states and hospitals for selection
 all_states = sorted(pd.concat([state_spending['State'], hospital_spending['State']]).unique())
-all_hospitals = sorted(pd.concat([hospital_spending['Facility Name'], complications_deaths_df['Facility Name'], payment_value_care_df['Facility Name']]).unique())
 
-# Select up to 2 States
+# Initially, select up to 2 States
 selected_states = st.sidebar.multiselect('Select up to 2 States', all_states, default=['MA', 'NY'])
 if len(selected_states) > 2:
     st.sidebar.warning('Please select no more than 2 states.')
 
-# Select up to 4 Hospitals
-selected_hospitals = st.sidebar.multiselect('Select up to 4 Hospitals', all_hospitals, default=['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL'])
+# Dynamically filter hospitals based on selected states
+filtered_hospitals_df = pd.concat([hospital_spending, complications_deaths_df, payment_value_care_df])
+filtered_hospitals = sorted(filtered_hospitals_df[filtered_hospitals_df['State'].isin(selected_states)]['Facility Name'].unique())
+
+# Select up to 4 Hospitals from the filtered list
+selected_hospitals = st.sidebar.multiselect('Select up to 4 Hospitals', filtered_hospitals, default=filtered_hospitals[:min(4, len(filtered_hospitals))])
 if len(selected_hospitals) > 4:
     st.sidebar.warning('Please select no more than 4 hospitals.')
 
 # Filter data based on selections
 state_spending_filtered = state_spending[state_spending['State'].isin(selected_states)]
 hospital_spending_filtered = hospital_spending[hospital_spending['State'].isin(selected_states) & hospital_spending['Facility Name'].isin(selected_hospitals)]
-### Task 1 : Medicare beneficiary spending per state and hospital 
+
 
 # Upload data
 state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
