@@ -241,9 +241,10 @@ hospital_to_color = {hospital: color for hospital, color in zip(selected_hospita
 hospital_colors = alt.Scale(domain=['blue', 'orange', 'yellow', 'lightgrey'], range=['blue', 'orange', 'yellow', 'lightgray'])
 filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fillna('lightgrey')
 
+filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
 filtered_df2.to_csv('filtered.csv', index=False)
 
-st.write(filtered_df2.head())
+
 
 selected_hospital_sizes = {hospital: 150 for hospital in selected_hospitals}  
 filtered_df2['DotSize'] = filtered_df2['Facility Name'].map(selected_hospital_sizes).fillna(50)  
