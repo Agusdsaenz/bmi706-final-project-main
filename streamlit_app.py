@@ -350,9 +350,13 @@ bar_charts = alt.hconcat(
 st.title("Medicare Beneficiary Spending Analysis")
 
 # Make the map and bar chart have the same height
-desired_height = 500
+desired_height = 800
 
-fig.update_layout(height=desired_height, width= 700)
+fig.update_layout(height=desired_height, width= 1200)
+
+
+# Display the figure in Streamlit, using the full width of the container
+st.plotly_chart(fig, use_container_width=False)
 fig_bar.update_traces(marker_line_width=1.5) 
 
 st.header("Medicare Spending Score per State")
