@@ -81,7 +81,7 @@ fig_bar = go.Figure(go.Bar(
     marker=dict(
         color=state_spending_sorted['Score'],  # Assign a color based on the 'Score' value
         colorscale='Blues',
-        line=dict(color='rgba(173, 216, 230, 1.0)', width=6)
+        line=dict(color='rgba(173, 216, 230, 1.0)', width=4)
     )
 ))
 
@@ -243,6 +243,7 @@ filtered_df2['Color'] = filtered_df2['Facility Name'].map(hospital_to_color).fil
 
 filtered_df2.to_csv('filtered.csv', index=False)
 
+st.write(filtered_df2.head())
 
 selected_hospital_sizes = {hospital: 150 for hospital in selected_hospitals}  
 filtered_df2['DotSize'] = filtered_df2['Facility Name'].map(selected_hospital_sizes).fillna(50)  
