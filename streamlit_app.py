@@ -373,5 +373,5 @@ st.header ('Payment versus complication for Pneumonia, Heart Attack, Heart Failu
 st.altair_chart(grid_chart, use_container_width=False)
 
 st.header ('Complications vs Payments')
-st.altair_chart(bar_charts,use_container_width=True )
+st.altair_chart(bar_charts,use_container_width=False )
 
