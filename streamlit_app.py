@@ -361,7 +361,7 @@ st.header("Medicare Spending Score per State")
 col1, col2 = st.columns([5,2]) 
 
 with col1:
-    st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
+    st.plotly_chart(fig, use_container_width=False, config={"staticPlot": True})
 
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
