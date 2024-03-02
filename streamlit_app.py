@@ -285,8 +285,8 @@ for state in selected_states:
         scatter_plots.append(scatter_plot)
 
 
-h_spacing = 40 
-v_spacing = 90
+h_spacing = 30 
+v_spacing = 80
 
 grid_chart = alt.vconcat(
     *[
