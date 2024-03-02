@@ -350,9 +350,9 @@ bar_charts = alt.hconcat(
 st.title("Medicare Beneficiary Spending Analysis")
 
 # Make the map and bar chart have the same height
-desired_height = 800
+desired_height = 600
 
-fig.update_layout(height=desired_height, width= 1200)
+fig.update_layout(height=desired_height, width= 800)
 
 
 # Display the figure in Streamlit, using the full width of the container
