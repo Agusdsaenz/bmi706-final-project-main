@@ -116,8 +116,8 @@ fig.update_layout(
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
-selected_states = ['MA', 'NY']
-selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
+#selected_states = ['MA', 'NY']
+#selected_hospitals = ['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL', 'CAMBRIDGE HEALTH ALLIANCE']
 
 
 colors = ['blue', 'orange', 'yellow']
