@@ -16,13 +16,19 @@ payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
 all_states = sorted(pd.concat([state_spending['State'], hospital_spending['State']]).unique())
 all_hospitals = sorted(pd.concat([hospital_spending['Facility Name'], complications_deaths_df['Facility Name'], payment_value_care_df['Facility Name']]).unique())
 
+# Select up to 2 States
 selected_states = st.sidebar.multiselect('Select up to 2 States', all_states, default=['MA', 'NY'])
-selected_hospitals = st.sidebar.multiselect('Select up to 3 Hospitals', all_hospitals, default=['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL'])
+if len(selected_states) > 2:
+    st.sidebar.warning('Please select no more than 2 states.')
 
+# Select up to 4 Hospitals
+selected_hospitals = st.sidebar.multiselect('Select up to 4 Hospitals', all_hospitals, default=['BOSTON MEDICAL CENTER', 'MASSACHUSETTS GENERAL HOSPITAL'])
+if len(selected_hospitals) > 4:
+    st.sidebar.warning('Please select no more than 4 hospitals.')
 
+# Filter data based on selections
 state_spending_filtered = state_spending[state_spending['State'].isin(selected_states)]
 hospital_spending_filtered = hospital_spending[hospital_spending['State'].isin(selected_states) & hospital_spending['Facility Name'].isin(selected_hospitals)]
-
 ### Task 1 : Medicare beneficiary spending per state and hospital 
 
 # Upload data
