@@ -352,13 +352,13 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 
 # Display the figure in Streamlit, using the full width of the container
-st.set_page_config(layout="wide")
+
 
 fig_bar.update_traces(marker_line_width=1.5) 
 
 st.header("Medicare Spending Score per State")
 
-col1, col2 = st.columns([4,2]) 
+col1, col2 = st.columns([5,2]) 
 
 with col1:
     st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
