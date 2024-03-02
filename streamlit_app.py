@@ -278,8 +278,8 @@ for state in selected_states:
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
-            width=150,
-            height=150  
+            width=170,
+            height=170  
         )
         
         scatter_plots.append(scatter_plot)
@@ -322,8 +322,8 @@ bar_chart_payment = alt.Chart(avg_payment_score).mark_bar(size=30).encode(
     tooltip=['Facility Name:N', 'Payment:Q']
 ).properties(
     title='Average Payments for MI+HF+Pneumonia+Hip/Knee',
-    width=250,
-    height=250
+    width=200,
+    height=200
 )
 
 
