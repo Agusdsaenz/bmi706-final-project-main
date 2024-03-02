@@ -345,6 +345,63 @@ bar_charts = alt.hconcat(
     color='independent'
 )
 
+## Task 4 - plot hospital rating to Medicare spending 
+hospital_info_df = pd.read_csv('Hospital_General_Information.csv')
+medicare_spending_copy_df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
+
+#clean up hospital info and medicare spending tables before merging
+hospital_info_df['Facility ID'] = hospital_info_df['Facility ID'].astype(str)
+medicare_spending_copy_df['Facility ID'] = medicare_spending_copy_df['Facility ID'].astype(str)
+medicare_spending_copy_df.dropna(subset=['Facility Name'], inplace=True)
+hospital_info_df.dropna(subset=['Facility Name'], inplace=True)
+merged_hospital_info_spending_df = medicare_spending_copy_df.merge(
+    hospital_info_df,
+    how='inner',
+    left_on=['Facility ID'],
+    right_on=['Facility ID']
+)
+
+#After merging, ensure that any hospitals with spending or ratings that are NA are rmeoved, and relabel facility name column
+merged_hospital_info_spending_df.dropna(subset=['Hospital overall rating', 'Score'])
+merged_hospital_info_spending_df['Score'] = pd.to_numeric(merged_hospital_info_spending_df['Score'].str.replace('[\$,]', '', regex=True), errors='coerce')
+merged_hospital_info_spending_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
+merged_hospital_info_spending_df.rename(columns={'State_x': 'State'}, inplace=True)
+
+filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[merged_hospital_info_spending_df['State'].isin(selected_states)]
+
+#create boxplot only
+rating_base = alt.Chart(filtered_merged_hospital_info_spending_df)
+
+rating_boxplot = rating_base.mark_boxplot(extent='min-max').encode(
+    x=alt.X('Hospital overall rating:N'),
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.4,1.4]))
+).properties(
+    width=550,
+    title="Hospital Rating versus Medicare Spending"
+)
+
+rating_jitter = rating_base.mark_circle(size=8).encode(
+    x=alt.X('Hospital overall rating:N'),
+    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.4,1.4])),
+    yOffset="jitter:Q",
+    color=alt.Color('Hospital overall rating:N').legend(None)
+).transform_calculate(
+    jitter='random()'
+)
+
+### To do - add state by state display and superimpose 3 hospitals
+
+
+
+scatter_jitter = rating_boxplot + rating_jitter
+
+
+
+
+## source: https://altair-viz.github.io/gallery/strip_plot_jitter.html
+# https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
+
+
 # Combine all the charts into one Streamlit app
 
 st.title("Medicare Beneficiary Spending Analysis")
@@ -365,6 +422,9 @@ with col1:
 
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
+
+st.header ('Hospital Star Rating vs Payments')
+st.altair_chart(scatter_jitter,use_container_width=True )
 
 st.header("Medicare Spending per Beneficiary by Hospital and State")
 st.altair_chart(final_chart, use_container_width=True)
