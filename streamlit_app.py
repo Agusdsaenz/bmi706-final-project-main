@@ -25,7 +25,7 @@ filtered_hospitals_df = pd.concat([hospital_spending, complications_deaths_df, p
 filtered_hospitals = sorted(filtered_hospitals_df[filtered_hospitals_df['State'].isin(selected_states)]['Facility Name'].unique())
 
 # Select up to 4 Hospitals from the filtered list
-selected_hospitals = st.sidebar.multiselect('Select up to 4 Hospitals', filtered_hospitals, default=filtered_hospitals[:min(3, len(filtered_hospitals))])
+selected_hospitals = st.sidebar.multiselect('Select up to 3 Hospitals', filtered_hospitals, default=filtered_hospitals[:min(3, len(filtered_hospitals))])
 if len(selected_hospitals) > 3:
     st.sidebar.warning('Please select no more than 3 hospitals.')
 
