@@ -145,7 +145,7 @@ base = alt.Chart(df_sorted).encode(
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
     tooltip=['Facility Name', 'Score']
 ).properties(
-    width=450
+    width=400
 )
 
 
@@ -278,8 +278,8 @@ for state in selected_states:
             tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
-            width=170,
-            height=180  
+            width=150,
+            height=150  
         )
         
         scatter_plots.append(scatter_plot)
