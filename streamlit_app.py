@@ -81,7 +81,7 @@ fig_bar = go.Figure(go.Bar(
     marker=dict(
         color=state_spending_sorted['Score'],  # Assign a color based on the 'Score' value
         colorscale='Blues',
-        line=dict(color='rgba(173, 216, 230, 1.0)', width=4)
+        line=dict(color='rgba(173, 216, 230, 1.0)', width=6)
     )
 ))
 
