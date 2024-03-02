@@ -68,8 +68,8 @@ fig = go.Figure(data=go.Choropleth(
 fig.update_layout(
     title_text='Medicare Spending Score per Beneficiary',
     geo_scope='usa',  # limit map scope to USA
-    width=1200,
-    height=800
+    width=1400,
+    height=1000
 )
 
 # Bar chart
