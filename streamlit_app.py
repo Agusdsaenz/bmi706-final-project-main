@@ -352,6 +352,7 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 
 # Display the figure in Streamlit, using the full width of the container
+st.set_page_config(layout="wide")
 
 fig_bar.update_traces(marker_line_width=1.5) 
 
