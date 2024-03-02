@@ -351,15 +351,16 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 # Make the map and bar chart have the same height
 desired_height = 500
+
 fig.update_layout(height=desired_height, width= 700)
-fig_bar.update_layout(height=desired_height)
+fig_bar.update_traces(marker_line_width=1.5) 
 
 st.header("Medicare Spending Score per State")
 
-col1, col2 = st.columns([2.5,1]) 
+col1, col2 = st.columns([3,2]) 
 
 with col1:
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
 
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
