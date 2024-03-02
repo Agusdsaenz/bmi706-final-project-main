@@ -1,3 +1,18 @@
+
+'''
+streamlit_app.py
+Authors: Nina Gold, Agustina Saenz, Jacqueline You
+Class: BMI 706, Spring 2024
+Updated: March 2024
+Purpose: Code to visualize different US hospitals' Medicare Hospital Spending per Patient and select outcomes
+Data Source: data.cms.gov
+
+References:
+https://altair-viz.github.io/gallery/strip_plot_jitter.html
+https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
+'''
+
+
 import altair as alt
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,7 +23,8 @@ state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
 hospital_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 complications_deaths_df = pd.read_csv('Complications_and_Deaths-Hospital.csv')
 payment_value_care_df = pd.read_csv('Payment_and_Value_of_Care-Hospital.csv')
-
+hospital_info_df = pd.read_csv('Hospital_General_Information.csv')
+medicare_spending_copy_df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
 
 # Sidebar Selections
@@ -127,12 +143,14 @@ hospital_to_color = {hospital: color for hospital, color in zip(selected_hospita
 df['IsSelected'] = df['Facility Name'].apply(lambda x: x in selected_hospitals)
 
 
+#helper function to map hospital to either the special 3 colors or default (grey)
 def apply_color(row):
     if row['Facility Name'] in hospital_to_color: 
         return hospital_to_color[row['Facility Name']]  
     else:
         return "#D3D3D3" 
 
+#set color property for each hospital
 df['Color'] = df.apply(apply_color, axis=1)
 
 
@@ -140,6 +158,7 @@ df_filtered = df[df['State'].isin(selected_states)].copy()
 df_filtered['Score'] = pd.to_numeric(df_filtered['Score'], errors='coerce')
 df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score', ascending=False)).reset_index(drop=True)
 
+#create facility name vs Medicare Spending per Beneficiary scatterplot
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.6, 1.4])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
@@ -188,6 +207,7 @@ complications_deaths_filtered_df = complications_deaths_df[
     complications_deaths_df['Measure Name'].isin(filtered_measures)
 ]
 
+#for each health condition (e.g. pnuemonia), mapping complication/death rate to appropriate payment measure
 
 measure_name_mapping = {
     "Rate of complications for hip/knee replacement patients": "Payment for hip/knee replacement patients",
@@ -197,17 +217,19 @@ measure_name_mapping = {
 }
 complications_deaths_filtered_df['Payment Measure Name'] = complications_deaths_filtered_df['Measure Name'].map(measure_name_mapping)
 
-
+#stringify facility IDs
 complications_deaths_filtered_df['Facility ID'] = complications_deaths_filtered_df['Facility ID'].astype(str)
 payment_value_care_df['Facility ID'] = payment_value_care_df['Facility ID'].astype(str)
 
+# remove facilities that are listed as NA
 complications_deaths_filtered_df.dropna(subset=['Facility Name'], inplace=True)
 payment_value_care_df.dropna(subset=['Facility Name'], inplace=True)
 
+#remove whitespace for facility name strings
 complications_deaths_filtered_df['Facility Name'] = complications_deaths_filtered_df['Facility Name'].str.strip()
 payment_value_care_df['Facility Name'] = payment_value_care_df['Facility Name'].str.strip()
 
-
+#merge complications/death data frame with payment data frame
 merged_df = complications_deaths_filtered_df.merge(
     payment_value_care_df,
     how='inner',
@@ -216,6 +238,7 @@ merged_df = complications_deaths_filtered_df.merge(
 )
 print (complications_deaths_filtered_df.head())
 
+#clean up column names in merged data set
 merged_df.drop(['State_y'], axis=1, inplace=True)
 merged_df.rename(columns={'State_x': 'State'}, inplace=True)
 
@@ -223,19 +246,22 @@ merged_df.drop(['Facility Name_y'], axis=1, inplace=True)
 merged_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
 
 
-
+#export merged dataset
 merged_df.to_csv('merged_df_corrected.csv', index=False)
 
+#subset the merged dataset to only 3 states that have been selected by user
 filtered_df2 = merged_df[merged_df['State'].isin(selected_states)]
 
+#remove any facilities with payment or scores that are NA
 filtered_df2 = filtered_df2.dropna(subset=['Score', 'Payment'])
 
+#convert payments and score to numeric type
 filtered_df2['Payment'] = pd.to_numeric(filtered_df2['Payment'].str.replace('[\$,]', '', regex=True), errors='coerce')
 
 
 filtered_df2['Score'] = pd.to_numeric(filtered_df2['Score'], errors='coerce')
 
-
+#map hospitals to 3 colors
 colors = ['blue', 'orange', 'yellow'] 
 hospital_to_color = {hospital: color for hospital, color in zip(selected_hospitals, colors)}
 hospital_colors = alt.Scale(domain=['blue', 'orange', 'yellow', 'lightgrey'], range=['blue', 'orange', 'yellow', 'lightgray'])
@@ -249,6 +275,7 @@ filtered_df2.to_csv('filtered.csv', index=False)
 selected_hospital_sizes = {hospital: 150 for hospital in selected_hospitals}  
 filtered_df2['DotSize'] = filtered_df2['Facility Name'].map(selected_hospital_sizes).fillna(50)  
 
+#create scatterplots for each state
 scatter_plots = []
 measure_titles = {
     "Rate of complications for hip/knee replacement patients": "Hip/Knee Replacement",
@@ -346,8 +373,7 @@ bar_charts = alt.hconcat(
 )
 
 ## Task 4 - plot hospital rating to Medicare spending 
-hospital_info_df = pd.read_csv('Hospital_General_Information.csv')
-medicare_spending_copy_df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
+
 
 #clean up hospital info and medicare spending tables before merging
 hospital_info_df['Facility ID'] = hospital_info_df['Facility ID'].astype(str)
@@ -380,6 +406,7 @@ rating_boxplot = rating_base.mark_boxplot(extent='min-max').encode(
     title="Hospital Rating versus Medicare Spending"
 )
 
+#add jitter scatterplot layer
 rating_jitter = rating_base.mark_circle(size=8).encode(
     x=alt.X('Hospital overall rating:N'),
     y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.4,1.4])),
@@ -389,7 +416,7 @@ rating_jitter = rating_base.mark_circle(size=8).encode(
     jitter='random()'
 )
 
-### To do - add state by state display and superimpose 3 hospitals
+# To do - add state by state display and superimpose 3 hospitals
 
 
 
@@ -397,12 +424,7 @@ scatter_jitter = rating_boxplot + rating_jitter
 
 
 
-
-## source: https://altair-viz.github.io/gallery/strip_plot_jitter.html
-# https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
-
-
-# Combine all the charts into one Streamlit app
+#### Combine all the charts into one Streamlit app
 
 st.title("Medicare Beneficiary Spending Analysis")
 
