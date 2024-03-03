@@ -41,7 +41,7 @@ if len(selected_states) > 2:
 filtered_hospitals_df = pd.concat([hospital_spending, complications_deaths_df, payment_value_care_df])
 filtered_hospitals = sorted(filtered_hospitals_df[filtered_hospitals_df['State'].isin(selected_states)]['Facility Name'].unique())
 
-# Select up to 4 Hospitals from the filtered list
+# Select up to 3 Hospitals from the filtered list
 selected_hospitals = st.sidebar.multiselect('Select up to 3 Hospitals', filtered_hospitals, default=filtered_hospitals[:min(3, len(filtered_hospitals))])
 if len(selected_hospitals) > 3:
     st.sidebar.warning('Please select no more than 3 hospitals.')
@@ -394,7 +394,12 @@ merged_hospital_info_spending_df['Score'] = pd.to_numeric(merged_hospital_info_s
 merged_hospital_info_spending_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
 merged_hospital_info_spending_df.rename(columns={'State_x': 'State'}, inplace=True)
 
+
+filtered_hospital_info_spending_selected_df = merged_hospital_info_spending_df.copy()
+filtered_hospital_info_spending_selected_df = filtered_hospital_info_spending_selected_df[merged_hospital_info_spending_df['State'].isin(selected_states) & merged_hospital_info_spending_df['Facility Name'].isin(selected_hospitals)]
 filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[merged_hospital_info_spending_df['State'].isin(selected_states)]
+
+print(filtered_hospital_info_spending_selected_df)
 
 #create boxplot only
 rating_base = alt.Chart(filtered_merged_hospital_info_spending_df)
@@ -408,20 +413,27 @@ rating_boxplot = rating_base.mark_boxplot(extent='min-max', opacity=0.5, color="
 )
 
 #add jitter scatterplot layer
-rating_jitter = rating_base.mark_circle(size=12, opacity=0.8).encode(
+rating_jitter = rating_base.mark_circle(size=12, opacity=0.8, color="grey").encode(
     x=alt.X('Hospital overall rating:N'),
-    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3])),
+    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
     xOffset="jitter:Q",
-    color=alt.Color('Hospital overall rating:N').legend(None)
+    tooltip=['Facility Name:N', 'State:N', "Score:Q"]
 ).transform_calculate(
     jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
 )
 
-# To do - add state by state display and superimpose 3 hospitals
+
+rating_selected_jitter = alt.Chart(filtered_hospital_info_spending_selected_df).mark_circle(size=20, opacity=0.8, color="cyan").encode(
+    x=alt.X('Hospital overall rating:N'),
+    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
+    tooltip=['Facility Name:N', "Score:Q"]
+)
+
+# To do - superimpose 3 hospitals
 
 
 
-scatter_jitter = rating_boxplot + rating_jitter
+scatter_jitter = rating_boxplot + rating_jitter + rating_selected_jitter
 
 
 
