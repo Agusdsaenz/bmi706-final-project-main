@@ -9,6 +9,7 @@ Data Source: data.cms.gov
 
 References:
 https://altair-viz.github.io/gallery/strip_plot_jitter.html
+https://www.geeksforgeeks.org/how-to-make-stripplot-with-jitter-in-altair-python/
 https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
 '''
 
@@ -398,22 +399,22 @@ filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[mer
 #create boxplot only
 rating_base = alt.Chart(filtered_merged_hospital_info_spending_df)
 
-rating_boxplot = rating_base.mark_boxplot(extent='min-max').encode(
+rating_boxplot = rating_base.mark_boxplot(extent='min-max', opacity=0.5, color="grey").encode(
     x=alt.X('Hospital overall rating:N'),
-    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.4,1.4]))
+    y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.6,1.3]))
 ).properties(
     width=550,
     title="Hospital Rating versus Medicare Spending"
 )
 
 #add jitter scatterplot layer
-rating_jitter = rating_base.mark_circle(size=8).encode(
+rating_jitter = rating_base.mark_circle(size=12, opacity=0.8).encode(
     x=alt.X('Hospital overall rating:N'),
-    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.4,1.4])),
-    yOffset="jitter:Q",
+    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3])),
+    xOffset="jitter:Q",
     color=alt.Color('Hospital overall rating:N').legend(None)
 ).transform_calculate(
-    jitter='random()'
+    jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
 )
 
 # To do - add state by state display and superimpose 3 hospitals
