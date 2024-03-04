@@ -431,6 +431,23 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 # Display the figure in Streamlit, using the full width of the container
 
+# Assuming 'selected_hospitals' and 'colors' are already defined
+legend_data = pd.DataFrame({
+    'Hospital Name': selected_hospitals,
+    'Color': colors
+})
+
+# Generate the legend as an Altair chart
+legend_chart = alt.Chart(legend_data).mark_point(size=100).encode(
+    y=alt.Y('Hospital Name:N', axis=alt.Axis(title='Hospital')),
+    color=alt.Color('Color:N', legend=None)
+).properties(
+    title='Hospital Legend'
+)
+
+# Display the legend in your Streamlit app at the appropriate location
+st.altair_chart(legend_chart, use_container_width=True)
+
 
 fig_bar.update_traces(marker_line_width=1) 
 
