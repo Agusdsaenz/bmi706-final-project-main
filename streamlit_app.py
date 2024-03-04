@@ -76,7 +76,7 @@ fig = go.Figure(data=go.Choropleth(
     locationmode='USA-states',
     colorscale='Blues',
     colorbar=dict(
-        title='Spending Score',  # Title for the colorbar
+        title='Medicare Spending',  # Title for the colorbar
         x=1,  # Position of the colorbar (1 is the default, which is the right side)
         len=0.75,  # Length of the colorbar (as a fraction of the plot height)
         thickness=20,  # Thickness of the colorbar
@@ -84,7 +84,7 @@ fig = go.Figure(data=go.Choropleth(
 ))
 
 fig.update_layout(
-    title_text='Medicare Spending Score per Beneficiary',
+    title_text='Medicare Spending per Beneficiary',
     geo_scope='usa',  # limit map scope to USA
     width=700,
     height=400
@@ -104,7 +104,7 @@ fig_bar = go.Figure(go.Bar(
 ))
 
 fig_bar.update_layout(
-    xaxis_title='Score',
+    xaxis_title='Medicare Spending per Beneficiary',
     yaxis_title='State',
     width=1000,
     height=600,  
@@ -117,7 +117,7 @@ fig = go.Figure(data=go.Choropleth(
     locationmode='USA-states',
     colorscale='Blues',
     colorbar=dict(
-        title='Spending Score',  
+        title='Medicare Spending per Beneficiary',  
         x=1,  
         len=0.25,  
         thickness=10,  
@@ -164,7 +164,7 @@ df_sorted = df_filtered.groupby('State').apply(lambda x: x.sort_values(by='Score
 base = alt.Chart(df_sorted).encode(
     y=alt.Y('Score:Q', axis=alt.Axis(title='Medicare Spending per Beneficiary'), scale=alt.Scale(domain=[0.6, 1.4])),
     x=alt.X('Facility Name:N', axis=alt.Axis(title='Hospitals', labels=False), sort='-y'),  
-    tooltip=['Facility Name', 'Score']
+    tooltip=['Facility Name', alt.Tooltip("Score:Q", title="Medicare Spending")]
 ).properties(
     width=400
 )
@@ -304,7 +304,7 @@ for state in selected_states:
             color=alt.Color('Color:N', scale=hospital_colors, legend=None),
             size=alt.Size('DotSize:Q', legend=None),
             opacity=alt.value(0.4),
-            tooltip=['Facility Name:N', 'Score:Q', 'Payment:Q']
+            tooltip=['Facility Name:N', alt.Tooltip("Score:Q", title="Complications"), 'Payment:Q']
         ).properties(
             title=f"{state} - {measure_titles[measure]}",
             width=160,
@@ -415,7 +415,7 @@ rating_jitter = rating_base.mark_circle(size=45,opacity=0.8).encode(
     x=alt.X('Hospital overall rating:N'),
     y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
     xOffset="jitter:Q",
-    tooltip=['Facility Name:N', 'State:N', "Score:Q"],
+    tooltip=['Facility Name:N', 'State:N', alt.Tooltip("Score:Q", title="Medicare Spending"), "Hospital overall rating:N"],
     color=alt.Color('Color:N', scale=light_gray_scale, legend=None)
 ).transform_calculate(
     jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
@@ -434,7 +434,7 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 fig_bar.update_traces(marker_line_width=1) 
 
-st.header("Medicare Spending Score per State")
+st.header("US Medicare Spending per Beneficiary by State")
 
 col1, col2 = st.columns([6,2]) 
 
