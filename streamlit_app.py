@@ -11,6 +11,7 @@ References:
 https://altair-viz.github.io/gallery/strip_plot_jitter.html
 https://www.geeksforgeeks.org/how-to-make-stripplot-with-jitter-in-altair-python/
 https://stackoverflow.com/questions/62281179/how-to-adjust-scale-ranges-in-altair
+https://stackoverflow.com/questions/59427304/dynamic-name-in-altair-alt-condition
 '''
 
 
@@ -410,7 +411,7 @@ rating_boxplot = rating_base.mark_boxplot(extent='min-max', opacity=0.5, color="
 )
 
 #add jitter scatterplot layer
-rating_jitter = rating_base.mark_circle(size=40, opacity=0.8).encode(
+rating_jitter = rating_base.mark_circle(size=45,opacity=0.8).encode(
     x=alt.X('Hospital overall rating:N'),
     y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
     xOffset="jitter:Q",
