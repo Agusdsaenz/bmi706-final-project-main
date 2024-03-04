@@ -441,24 +441,12 @@ with col1:
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
 
+colors = ['blue', 'orange', 'yellow'][:len(selected_hospitals)] 
+hospital_color_mapping = dict(zip(selected_hospitals, colors))
 
-if 2 <= len(selected_hospitals) <= 3:
-  
-    legend_data = pd.DataFrame({
-        'Hospital Name': selected_hospitals,
-        'Color': colors[:len(selected_hospitals)]  
-    })
-
-    
-    legend_chart = alt.Chart(legend_data).mark_square(size=150).encode(
-        y=alt.Y('Hospital Name:N', axis=alt.Axis(title=None)),
-        color=alt.Color('Color:N', scale=alt.Scale(domain=legend_data['Hospital Name'], range=legend_data['Color']), legend=None)
-    ).properties(
-        title='Hospital Legend'
-    )
-
-    
-    st.altair_chart(legend_chart, use_container_width=True)
+st.write("### Hospital Legend")
+for hospital, color in hospital_color_mapping.items():
+    st.markdown(f"<span style='color: {color};'>●</span> {hospital}", unsafe_allow_html=True)
 
 
 st.header ('Hospital Star Rating vs Payments')
