@@ -429,26 +429,6 @@ st.title("Medicare Beneficiary Spending Analysis")
 
 
 
-# Display the figure in Streamlit, using the full width of the container
-
-# Assuming 'selected_hospitals' and 'colors' are already defined
-legend_data = pd.DataFrame({
-    'Hospital Name': selected_hospitals,
-    'Color': colors
-})
-
-# Generate the legend as an Altair chart
-legend_chart = alt.Chart(legend_data).mark_point(size=100).encode(
-    y=alt.Y('Hospital Name:N', axis=alt.Axis(title='Hospital')),
-    color=alt.Color('Color:N', legend=None)
-).properties(
-    title='Hospital Legend'
-)
-
-# Display the legend in your Streamlit app at the appropriate location
-st.altair_chart(legend_chart, use_container_width=True)
-
-
 fig_bar.update_traces(marker_line_width=1) 
 
 st.header("US Medicare Spending per Beneficiary by State")
@@ -460,6 +440,26 @@ with col1:
 
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
+
+
+if 2 <= len(selected_hospitals) <= 3:
+  
+    legend_data = pd.DataFrame({
+        'Hospital Name': selected_hospitals,
+        'Color': colors[:len(selected_hospitals)]  
+    })
+
+    
+    legend_chart = alt.Chart(legend_data).mark_square(size=150).encode(
+        y=alt.Y('Hospital Name:N', axis=alt.Axis(title=None)),
+        color=alt.Color('Color:N', scale=alt.Scale(domain=legend_data['Hospital Name'], range=legend_data['Color']), legend=None)
+    ).properties(
+        title='Hospital Legend'
+    )
+
+    
+    st.altair_chart(legend_chart, use_container_width=True)
+
 
 st.header ('Hospital Star Rating vs Payments')
 st.altair_chart(combined_scatter_jitter,use_container_width=True )
