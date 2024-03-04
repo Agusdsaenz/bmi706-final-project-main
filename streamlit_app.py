@@ -394,13 +394,9 @@ merged_hospital_info_spending_df['Score'] = pd.to_numeric(merged_hospital_info_s
 merged_hospital_info_spending_df.rename(columns={'Facility Name_x': 'Facility Name'}, inplace=True)
 merged_hospital_info_spending_df.rename(columns={'State_x': 'State'}, inplace=True)
 
-
-filtered_hospital_info_spending_selected_df = merged_hospital_info_spending_df.copy()
-filtered_hospital_info_spending_selected_df = filtered_hospital_info_spending_selected_df[merged_hospital_info_spending_df['State'].isin(selected_states) & merged_hospital_info_spending_df['Facility Name'].isin(selected_hospitals)]
-filtered_hospital_info_spending_selected_df['Color'] = filtered_hospital_info_spending_selected_df.apply(apply_color, axis=1)
+#Filter by state and add circle mark color encoding
 filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[merged_hospital_info_spending_df['State'].isin(selected_states)]
-
-print(filtered_hospital_info_spending_selected_df)
+filtered_merged_hospital_info_spending_df['Color'] = filtered_merged_hospital_info_spending_df.apply(apply_color, axis=1)
 
 #create boxplot only
 rating_base = alt.Chart(filtered_merged_hospital_info_spending_df)
@@ -414,27 +410,18 @@ rating_boxplot = rating_base.mark_boxplot(extent='min-max', opacity=0.5, color="
 )
 
 #add jitter scatterplot layer
-rating_jitter = rating_base.mark_circle(size=12, opacity=0.8, color="grey").encode(
+rating_jitter = rating_base.mark_circle(size=40, opacity=0.8).encode(
     x=alt.X('Hospital overall rating:N'),
     y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
     xOffset="jitter:Q",
-    tooltip=['Facility Name:N', 'State:N', "Score:Q"]
+    tooltip=['Facility Name:N', 'State:N', "Score:Q"],
+    color=alt.Color('Color:N', scale=light_gray_scale, legend=None)
 ).transform_calculate(
     jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
 )
 
-#superimposed 3 hospitals with color
-rating_selected_jitter = alt.Chart(filtered_hospital_info_spending_selected_df).mark_circle(size=80, opacity=0.8, color="cyan").encode(
-    x=alt.X('Hospital overall rating:N'),
-    y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
-    color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
-    tooltip=['Facility Name:N', "Score:Q"]
-)
-
-
-scatter_jitter = rating_boxplot + rating_jitter + rating_selected_jitter
-
-
+combined_scatter_jitter = alt.layer(rating_boxplot, rating_jitter).facet(row=alt.Row('State'))
+    
 #### Combine all the charts into one Streamlit app
 
 st.title("Medicare Beneficiary Spending Analysis")
@@ -457,7 +444,7 @@ with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
 
 st.header ('Hospital Star Rating vs Payments')
-st.altair_chart(scatter_jitter,use_container_width=True )
+st.altair_chart(combined_scatter_jitter,use_container_width=True )
 
 st.header("Medicare Spending per Beneficiary by Hospital and State")
 st.altair_chart(final_chart, use_container_width=False)
@@ -465,6 +452,6 @@ st.altair_chart(final_chart, use_container_width=False)
 st.header ('Payment versus complication for Pneumonia, Heart Attack, Heart Failure and Hip/Knee replacement')
 st.altair_chart(grid_chart, use_container_width=False)
 
-st.header ('Complications vs Payments')
+st.header ('Complications vs Medicare Spending per Beneficiary')
 st.altair_chart(bar_charts,use_container_width=False )
 
