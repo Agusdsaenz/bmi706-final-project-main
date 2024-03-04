@@ -397,6 +397,7 @@ merged_hospital_info_spending_df.rename(columns={'State_x': 'State'}, inplace=Tr
 
 filtered_hospital_info_spending_selected_df = merged_hospital_info_spending_df.copy()
 filtered_hospital_info_spending_selected_df = filtered_hospital_info_spending_selected_df[merged_hospital_info_spending_df['State'].isin(selected_states) & merged_hospital_info_spending_df['Facility Name'].isin(selected_hospitals)]
+filtered_hospital_info_spending_selected_df['Color'] = filtered_hospital_info_spending_selected_df.apply(apply_color, axis=1)
 filtered_merged_hospital_info_spending_df = merged_hospital_info_spending_df[merged_hospital_info_spending_df['State'].isin(selected_states)]
 
 print(filtered_hospital_info_spending_selected_df)
@@ -422,19 +423,16 @@ rating_jitter = rating_base.mark_circle(size=12, opacity=0.8, color="grey").enco
     jitter='sqrt(-2*log(random()))*cos(2*PI*random())'
 )
 
-
-rating_selected_jitter = alt.Chart(filtered_hospital_info_spending_selected_df).mark_circle(size=20, opacity=0.8, color="cyan").encode(
+#superimposed 3 hospitals with color
+rating_selected_jitter = alt.Chart(filtered_hospital_info_spending_selected_df).mark_circle(size=80, opacity=0.8, color="cyan").encode(
     x=alt.X('Hospital overall rating:N'),
     y=alt.Y('Score:Q', scale=alt.Scale(domain=[0.6,1.3]), axis=alt.Axis(title='Medicare Spending per Beneficiary')),
+    color=alt.Color('Color:N', scale=light_gray_scale, legend=None),
     tooltip=['Facility Name:N', "Score:Q"]
 )
 
-# To do - superimpose 3 hospitals
-
-
 
 scatter_jitter = rating_boxplot + rating_jitter + rating_selected_jitter
-
 
 
 #### Combine all the charts into one Streamlit app
